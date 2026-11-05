@@ -1,8 +1,15 @@
 {
-  // Public site (Cloudflare Workers static assets). Rebuild first (python -X utf8 build.py), then: npx wrangler deploy
+  // Private site: Cloudflare Access guards nam-type-model.jskjeltorp.workers.dev (invited emails only), and
+  // src/worker.js refuses any request that did not come through Access before serving ./site.
+  // Rebuild first (python -X utf8 build.py), then: npx wrangler deploy
   "name": "nam-type-model",
+  "main": "src/worker.js",
   "compatibility_date": "2026-09-18",
-  "assets": { "directory": "./site" },
+  "assets": { "directory": "./site", "binding": "ASSETS", "run_worker_first": true },
+  "vars": {
+    "ACCESS_TEAM_DOMAIN": "mute-disk-7241.cloudflareaccess.com",
+    "ACCESS_AUD": "7babd6e3fde9be1344ab154265c93bd1da91ecc994d347fdf6eabfc2b4c3e191"
+  },
   "workers_dev": true,
   "preview_urls": false
 }

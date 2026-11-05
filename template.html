@@ -1,0 +1,1109 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A NAM-type model of Norway</title>
+<meta name="description" content="A small quarterly equilibrium-correction model of Norway in the tradition of Bårdsen, Eitrheim, Jansen and Nymoen, re-estimated on public data: forecasts, policy experiments, equations, robustness tests and forecasting record.">
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f4f3ef; --surface: #fcfcfb; --surface-2: #efeee9; --line: #dedcd3;
+  --text: #0b0b0b; --text-2: #52514e; --muted: #7a7873; --accent: #2a78d6;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#6250d6; --s8:#e34948; --s9:#8b8984; --s10:#bdbbb3;
+  --grid: #e6e4dc; --shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --line: #33322f;
+    --text: #f0efec; --text-2: #c3c2b7; --muted: #8e8c85; --accent: #3987e5;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767; --s9:#77756f; --s10:#55544f;
+    --grid: #2b2b28; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --line: #33322f;
+  --text: #f0efec; --text-2: #c3c2b7; --muted: #8e8c85; --accent: #3987e5;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767; --s9:#77756f; --s10:#55544f;
+  --grid: #2b2b28; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 600; letter-spacing: -.01em; margin: 0; }
+h2 { font-size: 1.6rem; margin-bottom: .25rem; }
+h3 { font-size: 1.1rem; margin: 0 0 .5rem; }
+p { margin: .4rem 0; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+main.wrap.wide { max-width: 1800px; }
+h1 { font-size: 2rem; line-height: 1.15; margin-bottom: .3rem; } h1 small { display: block; font-size: 1rem; color: var(--text-2); font-weight: 400; font-family: -apple-system, "Segoe UI", sans-serif; margin-top: 4px; }
+section.pane > .block:first-child { margin-top: 0; }
+.guide { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 14px; } .guide a.card { margin: 0; display: block; color: inherit; } .guide a.card:hover { text-decoration: none; border-color: var(--accent); } .guide a.card b { display: block; font-family: Georgia, serif; font-size: 1.05rem; margin-bottom: 4px; } .guide a.card span { color: var(--text-2); font-size: .88rem; }
+nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+nav .wrap { display: flex; gap: 0 4px; flex-wrap: wrap; align-items: center; min-height: 48px; font-size: .92rem; }
+nav a.tab { color: var(--text-2); padding: 12px 10px; border-bottom: 2px solid transparent; }
+nav a.tab:hover { color: var(--text); text-decoration: none; }
+nav a.tab.active { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+nav .brand { font-family: Georgia, serif; font-weight: 600; color: var(--text); margin-right: auto; padding: 12px 0; }
+nav button { background: none; border: 1px solid var(--line); color: var(--text-2); border-radius: 999px; padding: 4px 10px; cursor: pointer; font-size: .8rem; margin-left: 8px; }
+section.pane { display: none; padding: 28px 0 40px; }
+section.pane.active { display: block; }
+.block { margin-top: 36px; }
+.lede { color: var(--text-2); max-width: 70ch; margin-bottom: 1rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.chip { border: 1px solid var(--line); background: var(--surface-2); color: var(--text-2); border-radius: 999px; padding: 4px 10px 4px 8px; font: inherit; font-size: .82rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: transform .15s, background .15s; }
+.chip:hover { color: var(--text); transform: translateY(-1px); } .chip.on { background: var(--text); color: var(--bg); border-color: var(--text); } .chip.on .dot { outline: 2px solid var(--bg); }
+.chip small { opacity: .7; }
+.btn { border: 1px solid var(--accent); background: var(--accent); color: #fff; border-radius: 6px; padding: 5px 12px; font: inherit; font-size: .85rem; cursor: pointer; } .btn:hover { filter: brightness(1.1); } .btn.stop { background: transparent; color: var(--accent); }
+.hero { display: grid; grid-template-columns: 180px 1fr; gap: 28px; align-items: start; padding-top: 12px; }
+.hero img { width: 180px; height: 220px; object-fit: cover; border-radius: 8px; box-shadow: var(--shadow); background: var(--surface-2); }
+.hero .ph { width: 180px; height: 220px; border: 1px dashed var(--line); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: .8rem; text-align: center; padding: 12px; }
+.hero h1 { font-size: 2.4rem; line-height: 1.1; }
+.hero .title { color: var(--text-2); margin: .4rem 0 1rem; }
+.credit { color: var(--muted); font-size: .75rem; }
+.ovhead { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; }
+.ovhead .lede { margin-bottom: 0; }
+.agentbox { background: var(--surface); border: 1px solid var(--accent); border-radius: 12px; padding: 14px 16px; box-shadow: var(--shadow); font-size: .86rem; margin-top: 6px; }
+.agentbox .tag { display: inline-block; font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.agentbox p { margin: 0 0 8px; color: var(--text-2); }
+.agentbox dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; }
+.agentbox dt { color: var(--muted); font-size: .78rem; white-space: nowrap; }
+.agentbox dd { margin: 0; font-variant-numeric: tabular-nums; }
+.agentbox .warn { color: #b4541a; }
+@media (max-width: 900px) { .ovhead { grid-template-columns: 1fr; } }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 1rem 0; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); }
+.tile .n { font-size: 1.9rem; font-weight: 600; line-height: 1.1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.tile .l { color: var(--text-2); font-size: .85rem; margin-top: 4px; }
+.tile .s { color: var(--muted); font-size: .75rem; margin-top: 2px; }
+a.tile { display: block; color: inherit; transition: border-color .15s, transform .15s; } a.tile:hover { text-decoration: none; border-color: var(--accent); transform: translateY(-1px); } a.tile .n::after { content: " ↗"; font-size: .7em; color: var(--accent); }
+#pubsYear .annotation { cursor: pointer; }
+.tl li.flash .what { color: var(--accent); } .tl li .what { transition: color .4s; }
+.links { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .85rem; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow); margin: 14px 0; }
+.card h3 { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.card h3 small { color: var(--muted); font-weight: 400; font-size: .8rem; font-family: -apple-system, "Segoe UI", sans-serif; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; } .grid2 .card { margin: 0; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }   /* minmax(0, …): a chart drawn while its tab was hidden must not widen the column */
+@media (max-width: 900px) { .grid2, .grid3 { grid-template-columns: 1fr; } .hero { grid-template-columns: 1fr; } .hero img, .hero .ph { width: 140px; height: 170px; } }
+.plot { width: 100%; min-height: 320px; }
+.note { color: var(--muted); font-size: .8rem; margin-top: 6px; }
+.empty { color: var(--muted); font-size: .9rem; border: 1px dashed var(--line); border-radius: 10px; padding: 18px; text-align: center; margin: 14px 0; }
+/* tables */
+table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--text-2); font-weight: 600; cursor: pointer; white-space: nowrap; user-select: none; position: sticky; top: 48px; background: var(--surface); }
+th.sorted::after { content: " ▾"; color: var(--muted); } th.sorted.asc::after { content: " ▴"; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.tag { display: inline-block; font-size: .72rem; padding: 1px 7px; border-radius: 999px; background: var(--surface-2); color: var(--text-2); white-space: nowrap; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0 12px; }
+.filters select, .filters input { font: inherit; font-size: .88rem; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--text); }
+.filters input { min-width: 240px; flex: 1; }
+.filters button, .btn { font: inherit; font-size: .85rem; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); color: var(--text); cursor: pointer; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .82rem; color: var(--text-2); margin: 6px 0; }
+table.plain { width: 100%; border-collapse: collapse; font-size: .9rem; } table.plain th, table.plain td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; } table.plain th { color: var(--muted); font-weight: 600; font-size: .78rem; position: static; cursor: default; }
+.facts { list-style: none; padding: 0; margin: 0; }
+.facts li { padding: 6px 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
+.facts li .src { color: var(--muted); font-size: .76rem; display: block; }
+footer { border: 0; padding: 8px 0 0; margin: 0; font-family: -apple-system, "Segoe UI", sans-serif; font-size: .8rem; color: var(--muted); }
+/* output & themes */
+.themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; margin-top: 14px; } .themes .card { margin: 0; }
+.tcard h3 span { display: inline; } .tcard h3 small { white-space: nowrap; }
+.tcard .stats { font-size: .85rem; color: var(--text-2); } .tcard .stats b { color: var(--text); font-weight: 600; }
+.tcard svg { width: 100%; height: 44px; display: block; margin: 10px 0 2px; }
+.tcard .axis { display: flex; justify-content: space-between; font-size: .72rem; color: var(--muted); }
+.tcard .top { font-size: .86rem; margin-top: 10px; } .tcard .meta { color: var(--muted); font-size: .78rem; }
+.tcard .lk { font-size: .82rem; margin-top: 8px; }
+/* timeline */
+.tl { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--line); margin-left: 70px; }
+.tl li { position: relative; padding: 0 0 18px 22px; }
+.tl li::before { content: ""; position: absolute; left: -7px; top: 8px; width: 12px; height: 12px; border-radius: 50%; background: var(--s1); border: 2px solid var(--surface); }
+.tl .yr { position: absolute; left: -92px; top: 2px; width: 62px; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; font-size: .9rem; color: var(--text-2); }
+.tl .what { font-weight: 600; }
+.tl .detail { color: var(--text-2); font-size: .92rem; }
+.tl .src { color: var(--muted); font-size: .75rem; }
+.tl .partly::before { background: var(--surface); border: 2px solid var(--s1); }
+/* highlights */
+.hl { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.hl .card { margin: 0; display: flex; flex-direction: column; }
+.hl img { width: 100%; max-height: 260px; object-fit: contain; border-radius: 6px; background: var(--surface-2); margin: 6px 0; }
+.hl a.logo { display: inline-block; background: #fff; border-radius: 6px; padding: 6px 12px; margin: 6px 0 0; } .hl a.logo img { width: auto; height: 44px; margin: 0; background: transparent; border-radius: 0; }
+.hl .ph { background: var(--surface-2); border: 1px dashed var(--line); border-radius: 6px; padding: 14px; color: var(--muted); font-size: .8rem; margin: 6px 0; }
+.hl p { font-size: .92rem; color: var(--text-2); }
+/* covers (books) */
+.covers { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+.cover { text-align: center; font-size: .78rem; color: var(--text-2); }
+.cover img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 4px; box-shadow: var(--shadow); background: var(--surface-2); }
+.cover .nocover { width: 100%; aspect-ratio: 2 / 3; border-radius: 4px; box-shadow: var(--shadow); background: linear-gradient(160deg, var(--s1), var(--s7)); color: #fff; display: flex; align-items: center; justify-content: center; padding: 12px; font-family: Georgia, serif; font-size: .95rem; text-align: center; }
+.cover b { display: block; color: var(--text); margin-top: 6px; }
+/* Norges Bank publications */
+.pubs { list-style: none; padding: 0; margin: 0; }
+.pubs li { padding: 7px 0; border-bottom: 1px solid var(--line); font-size: .9rem; display: grid; grid-template-columns: 76px 1fr; gap: 8px; }
+.pubs .meta { color: var(--muted); font-size: .8rem; }
+.pubs .no { color: var(--muted); font-size: .78rem; white-space: nowrap; padding-top: 2px; }
+.yearhead { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 14px 0 2px; }
+/* tables */
+table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--text-2); font-weight: 600; cursor: pointer; white-space: nowrap; user-select: none; position: sticky; top: 48px; background: var(--surface); }
+th.sorted::after { content: " ▾"; color: var(--muted); } th.sorted.asc::after { content: " ▴"; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.tag { display: inline-block; font-size: .72rem; padding: 1px 7px; border-radius: 999px; background: var(--surface-2); color: var(--text-2); white-space: nowrap; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0 12px; }
+.filters select, .filters input { font: inherit; font-size: .88rem; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--text); }
+.filters input { min-width: 240px; flex: 1; }
+.filters button, .btn { font: inherit; font-size: .85rem; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); color: var(--text); cursor: pointer; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .82rem; color: var(--text-2); margin: 6px 0; }
+table.plain { width: 100%; border-collapse: collapse; font-size: .9rem; } table.plain th, table.plain td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; } table.plain th { color: var(--muted); font-weight: 600; font-size: .78rem; position: static; cursor: default; }
+.facts { list-style: none; padding: 0; margin: 0; }
+.facts li { padding: 6px 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
+.facts li .src { color: var(--muted); font-size: .76rem; display: block; }
+/* network */
+#network { position: relative; }
+#network svg { width: 100%; height: 620px; display: block; cursor: grab; border-radius: 8px; }
+#network svg:active { cursor: grabbing; }
+#network .lbl { font-size: 11px; fill: var(--text-2); pointer-events: none; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
+#network .lbl.me { font-size: 12px; font-weight: 600; fill: var(--text); }
+#network .tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; font-size: .8rem; color: var(--text); box-shadow: var(--shadow); max-width: 260px; display: none; z-index: 2; }
+#network .tip b { display: block; }
+/* research network, two steps out */
+#network2 { position: relative; }
+.netwrap { display: flex; gap: 14px; align-items: flex-start; }
+.netmain { flex: 1 1 0; min-width: 0; }
+.netside { flex: 0 0 250px; display: flex; flex-direction: column; gap: 12px; font-size: .85rem; max-height: 760px; overflow: auto; padding-right: 4px; }
+.netside input[type=search] { width: 100%; box-sizing: border-box; font: inherit; font-size: .88rem; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--text); }
+.netside .nsec { display: flex; flex-direction: column; gap: 3px; }
+.netside .nh { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 4px 0 2px; } .netside .nh small { text-transform: none; letter-spacing: 0; }
+.netside label { display: flex; align-items: center; gap: 6px; color: var(--text-2); cursor: pointer; }
+.netside .gh { font-size: .75rem; color: var(--muted); margin-top: 6px; }
+.netside .hb { display: flex; align-items: center; gap: 6px; padding: 3px 6px; border-radius: 6px; cursor: pointer; color: var(--text); background: none; border: 0; font: inherit; font-size: .85rem; text-align: left; width: 100%; }
+.netside .hb:hover { background: var(--surface-2); } .netside .hb.on { background: var(--accent); color: #16202b; }
+.netside .hb small { color: var(--muted); margin-left: auto; white-space: nowrap; } .netside .hb.on small { color: #16202b; }
+.netside .cl { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
+@media (max-width: 900px) { .netwrap { flex-direction: column; } .netside { flex-basis: auto; max-height: none; } }
+#network2 svg { width: 100%; height: 720px; display: block; cursor: grab; border-radius: 8px; }
+#network2 svg:active { cursor: grabbing; }
+#network2 .lbl { font-size: 10px; fill: var(--text-2); pointer-events: none; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
+#network2 .lbl.d1 { font-size: 11px; fill: var(--text); }
+#network2 .lbl.hub { font-size: 11px; font-weight: 600; fill: var(--text); }
+#network2 .lbl.me { font-size: 13px; font-weight: 600; fill: var(--text); }
+#network2 .tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; font-size: .8rem; color: var(--text); box-shadow: var(--shadow); max-width: 300px; display: none; z-index: 2; }
+#network2 .tip b { display: block; } #network2 .tip .m { color: var(--muted); }
+#network2 .float { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 3; }
+#network2 .float .btn { padding: 4px 10px; font-size: .8rem; }
+#network2 .float .btn.clear { display: none; } #network2.has-sel .float .btn.clear { display: inline-flex; }
+.pathbox .clearsel { float: right; font-size: .8rem; }
+.netkey { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .8rem; color: var(--text-2); margin: 8px 0 0; align-items: center; }
+.netkey .sw { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 5px; }
+.netkey span[data-hl] { cursor: pointer; padding: 2px 8px; border-radius: 999px; border: 1px solid transparent; } .netkey span[data-hl]:hover { border-color: var(--line); }
+.netkey span[data-hl].on { background: var(--surface-2); color: var(--text); border-color: var(--line); }
+.netkey .sw.hub { background: transparent; border: 2px solid var(--s4); } .netkey .ln { display: inline-block; width: 22px; border-top: 2px dashed var(--muted); vertical-align: middle; margin-right: 5px; }
+.pathbox { margin-top: 12px; font-size: .9rem; } .pathbox h4 { margin: 0 0 4px; font-size: 1rem; font-family: Georgia, serif; }
+.chain { padding: 6px 0; border-bottom: 1px solid var(--line); } .chain:last-child { border-bottom: 0; }
+.chain .arrow { color: var(--muted); padding: 0 4px; } .chain small { color: var(--text-2); } .chain i { color: var(--muted); font-style: italic; }
+.hubs { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 24px; } @media (max-width: 900px) { .hubs { columns: 1; } }
+.hubs li { break-inside: avoid; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
+.hubs .hn { font-weight: 600; cursor: pointer; } .hubs .hn:hover { color: var(--accent); } .hubs .inst { color: var(--muted); font-size: .8rem; }
+.hubs .chain { padding: 3px 0 0; border: 0; font-size: .85rem; color: var(--text-2); }
+.clusters { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.clusters .cl { background: var(--surface-2); border-radius: 10px; padding: 12px 14px; font-size: .9rem; }
+.clusters .cl b { display: block; font-family: Georgia, serif; font-size: 1rem; } .clusters .cl .note { margin: 2px 0 8px; }
+.clusters .chip { cursor: pointer; font-size: .78rem; padding: 2px 8px; }
+.conn td { font-size: .85rem; } .conn th:nth-child(4), .conn td.rel { width: 52%; } .conn th:nth-child(3) { width: 20%; } .conn ul { margin: 4px 0 0; padding-left: 16px; color: var(--text-2); font-size: .8rem; }
+.tag.v-yes { background: color-mix(in srgb, var(--s3) 20%, transparent); } .tag.v-partly { background: color-mix(in srgb, var(--s4) 25%, transparent); } .tag.v-no { background: color-mix(in srgb, var(--s8) 20%, transparent); }
+.tag.conf { color: var(--muted); font-size: .68rem; } .tag.conf.low { background: color-mix(in srgb, var(--s4) 25%, transparent); }
+tr.lowconf { opacity: .72; }
+table.noscholar .sc { display: none; }
+/* press & clippings */
+.clips { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+.clip { background: var(--surface-2); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+.clip .img { background: #e9e6dc; display: flex; align-items: flex-start; justify-content: center; max-height: 420px; overflow: hidden; } .clip a.img:hover img { filter: brightness(1.05); } .clip a.img { cursor: zoom-in; }
+.clip .img img { width: 100%; height: auto; display: block; object-fit: cover; object-position: top; }
+.clip .img.thumb img { width: auto; max-height: 220px; margin: 12px auto; box-shadow: var(--shadow); }
+.clip .body { padding: 12px 14px 14px; }
+.clip .meta { color: var(--text-2); font-size: .8rem; }
+.clip .hd { font-family: Georgia, serif; font-weight: 600; font-size: 1.05rem; margin: 4px 0; }
+.clip .ex { font-size: .86rem; color: var(--text-2); max-height: 7.5em; overflow: hidden; } .clip .ex mark { background: rgba(255, 214, 10, .35); color: var(--text); border-radius: 3px; padding: 0 2px; }
+.clip .lk { font-size: .82rem; margin-top: 6px; }
+.clip.uncertain { opacity: .75; }
+.press { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.press .it { background: var(--surface-2); border-radius: 10px; padding: 12px 14px; font-size: .9rem; }
+.press .it img { width: 100%; max-height: 220px; object-fit: cover; border-radius: 6px; margin: 6px 0; }
+.about { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.about .it { background: var(--surface-2); border-radius: 10px; padding: 12px 14px; font-size: .9rem; display: flex; flex-direction: column; gap: 6px; }
+.about .it blockquote { margin: 0; padding-left: 10px; border-left: 3px solid var(--accent); color: var(--text); font-style: italic; }
+.about .it .tr { color: var(--text-2); font-size: .85rem; }
+.about .kind { display: inline-block; font-size: .72rem; padding: 1px 8px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--text-2); margin-right: 6px; }
+#aboutKinds .chip.on { background: var(--accent); color: #16202b; border-color: var(--accent); }
+.press .it .meta { color: var(--muted); font-size: .78rem; }
+.press .it b { display: block; font-family: Georgia, serif; font-size: 1rem; }
+.press .it q { color: var(--text-2); font-style: italic; display: block; margin: 4px 0; }
+.videos { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+.videos .v { background: var(--surface-2); border-radius: 10px; overflow: hidden; font-size: .9rem; }
+.videos .v .frame { position: relative; aspect-ratio: 16 / 9; background: #000; } .videos .v .frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.videos .v a.thumb { display: block; position: relative; aspect-ratio: 16 / 9; background: var(--surface); overflow: hidden; } .videos .v a.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.videos .v a.thumb::after { content: "▶"; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 54px; height: 54px; border-radius: 50%; background: rgba(0,0,0,.6); color: #fff; font-size: 22px; display: flex; align-items: center; justify-content: center; }
+.videos .v .body { padding: 10px 14px 12px; } .videos .v b { display: block; font-family: Georgia, serif; font-size: 1rem; } .videos .v .meta { color: var(--muted); font-size: .78rem; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.gallery figure { margin: 0; background: var(--surface-2); border-radius: 8px; overflow: hidden; }
+.gallery img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.gallery figcaption { font-size: .78rem; color: var(--text-2); padding: 8px 10px; }
+/* co-author papers */
+.refs { list-style: none; padding: 0; margin: 0; }
+.refs li { padding: 8px 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
+.refs .meta { color: var(--text-2); font-size: .82rem; }
+.refs .y { display: inline-block; width: 44px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+footer { color: var(--muted); font-size: .8rem; padding: 40px 0 60px; border-top: 1px solid var(--line); margin-top: 40px; }
+footer ul { padding-left: 18px; }
+/* model tab */
+.mdwrap { display: flex; gap: 14px; align-items: flex-start; }
+.mdmain { flex: 1 1 0; min-width: 0; }
+.mdside { flex: 0 0 320px; position: sticky; top: 56px; max-height: calc(100vh - 68px); overflow: auto; font-size: .85rem; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
+.mdside .nsec { display: flex; flex-direction: column; gap: 3px; } .mdside .nh { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 6px 0 2px; }
+.mdside label { display: flex; align-items: center; gap: 6px; color: var(--text-2); cursor: pointer; } .mdside label.sub { margin-left: 22px; }
+.mdside details { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; background: var(--surface); } .mdside summary { cursor: pointer; font-weight: 600; font-size: .85rem; color: var(--text); }
+.mdside details.eqs summary small { color: var(--muted); font-weight: 400; }
+.sl { display: grid; grid-template-columns: 1fr 88px; gap: 2px 8px; align-items: center; margin: 6px 0; }
+.sl .lab { font-size: .78rem; color: var(--text-2); grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 8px; } .sl .lab .pub { color: var(--muted); font-size: .72rem; white-space: nowrap; }
+.sl input[type=range] { width: 100%; margin: 0; } .sl .val { font-variant-numeric: tabular-nums; font-size: .78rem; text-align: right; color: var(--text); width: 88px; padding: 2px 4px; }
+.sl.changed .val { color: var(--accent); font-weight: 600; border-color: var(--accent); }
+.kv { display: grid; grid-template-columns: 1fr 80px; gap: 4px 8px; align-items: center; margin: 4px 0; font-size: .8rem; color: var(--text-2); }
+.num { width: 80px; font: inherit; font-size: .82rem; padding: 3px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--text); }
+.grid3 .plot { min-height: 250px; }
+section.pane .grid3 .plot { min-height: 300px; }
+.pick { display: flex; flex-wrap: wrap; gap: 4px; margin: 2px 0 8px; }
+.pick button { font: inherit; font-size: .74rem; padding: 2px 9px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--text-2); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+.pick button:hover { border-color: var(--accent); } .pick button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.pick button .bd { display: none; min-width: 16px; padding: 0 4px; border-radius: 999px; background: var(--s4); color: #fff; font-size: .68rem; font-weight: 600; text-align: center; } .pick button.has .bd { display: inline-block; }
+.eqpanel { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--surface); }
+.eqgh { font-weight: 600; font-size: .88rem; color: var(--text); margin-bottom: 4px; } .eqgh small { display: block; font-weight: 400; color: var(--muted); font-size: .74rem; }
+.eqline { font-family: Georgia, "Times New Roman", serif; font-size: .9rem; line-height: 1.5; color: var(--text-2); padding: 6px 8px; margin: 4px 0 6px; background: var(--surface-2); border-radius: 6px; }
+.eqline b { color: var(--text); font-weight: 400; } .eqline b.chg { color: var(--accent); font-weight: 700; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: .74rem; color: var(--muted); }
+.chips button { font: inherit; font-size: .72rem; padding: 1px 7px; border: 1px solid var(--accent); border-radius: 999px; background: transparent; color: var(--accent); cursor: pointer; } .chips button:hover { background: var(--accent); color: #fff; }
+.eqcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 18px; margin: 10px 0; box-shadow: var(--shadow); }
+.eqcard summary { cursor: pointer; font-weight: 600; display: flex; gap: 6px 14px; flex-wrap: wrap; align-items: baseline; font-family: Georgia, serif; font-size: 1.05rem; } .eqcard summary small { color: var(--muted); font-weight: 400; font-size: .78rem; font-family: -apple-system, "Segoe UI", sans-serif; }
+.eqform { font-family: Georgia, "Times New Roman", serif; font-size: .98rem; margin: 10px 0; padding: 8px 12px; background: var(--surface-2); border-radius: 8px; overflow-x: auto; white-space: nowrap; }
+.eqcard .pubform { color: var(--text-2); font-size: .85rem; margin: 6px 0 10px; }
+.diag { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; } .diag span { border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; font-size: .76rem; color: var(--text-2); } .diag span.bad { border-color: var(--s8); color: var(--s8); } .diag span.warn { border-color: var(--s4); }
+.eqcard table td.pubv { color: var(--muted); font-size: .8rem; }
+.eqcard .eqplot { min-height: 240px; }
+.eqcard summary { list-style: none; padding: 4px 0; border-radius: 8px; } .eqcard summary::-webkit-details-marker { display: none; }
+.eqcard summary:hover { color: var(--accent); }
+.eqcard summary .open { margin-left: auto; font-family: -apple-system, "Segoe UI", sans-serif; font-size: .78rem; font-weight: 600; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 3px 11px; white-space: nowrap; }
+.eqcard summary .open::before { content: "▸ "; } .eqcard[open] summary .open::before { content: "▾ "; }
+.eqcard summary .open::after { content: "Show equation, tests and figures"; } .eqcard[open] summary .open::after { content: "Hide"; }
+.eqcard summary:hover .open { background: var(--accent); color: #fff; }
+.eqcard[open] > summary { border-bottom: 1px solid var(--line); border-radius: 0; margin-bottom: 8px; padding-bottom: 8px; }
+#mdResCorr table.plain { width: auto; } #mdResCorr td, #mdResCorr th { padding: 6px 12px; } #mdResCorr td.num { min-width: 3.6em; text-align: center; } #mdResCorr td.c { font-variant-numeric: tabular-nums; }
+#mdResCorr .scale { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--muted); margin-top: 6px; } #mdResCorr .scale i { display: inline-block; width: 120px; height: 10px; border-radius: 3px; background: linear-gradient(90deg, rgba(214,69,53,.85), rgba(214,69,53,0) 50%, rgba(66,133,244,0) 50%, rgba(66,133,244,.85)); }
+.eqtools { display: flex; gap: 8px; margin: 0 0 10px; }
+.fectl { flex-wrap: wrap; align-items: center; gap: 6px 16px; font-size: .85rem; color: var(--text-2); } .fectl label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+.losswrap, .ustarwrap { display: flex; gap: 14px; align-items: stretch; flex-wrap: wrap; } .lossmain, .ustarmain { flex: 1 1 520px; min-width: 0; } .losschart { flex: 1 1 340px; min-width: 0; } .ustartext { flex: 1 1 340px; min-width: 0; font-size: .9rem; }
+.lossctl { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin-bottom: 8px; font-size: .85rem; color: var(--text-2); } .lossctl label { display: inline-flex; align-items: center; gap: 8px; }
+.mdtbl td.best { font-weight: 700; color: var(--text); } .mdtbl td.model { font-weight: 600; } .mdtbl .r { color: var(--muted); font-size: .76rem; }
+.ustartext .eqform { font-size: .9rem; white-space: normal; } .ustartext p { margin: 8px 0; }
+#mdFeTable table.plain { width: auto; } #mdFeTable td, #mdFeTable th { white-space: nowrap; } #mdFeTable td:first-child { vertical-align: top; color: var(--text); font-weight: 600; }
+#mdLossPlot { min-height: 280px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; } .grid2 .plot { min-height: 230px; } .grid2 .sub { font-size: .8rem; color: var(--text-2); margin: 4px 0 2px; }
+@media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+.rbtbl td, .rbtbl th { white-space: normal; vertical-align: top; } .rbtbl td.dates { font-size: .8rem; color: var(--text-2); } .rbtbl .ok { color: var(--s3); font-weight: 600; } .rbtbl .bad { color: var(--s8); font-weight: 600; }
+.rbtbl td.num, .rbtbl th.num { white-space: nowrap; } #mdUstarPlot { min-height: 320px; } #mdFeE { min-height: 300px; } .eqtools .btn { font-size: .8rem; padding: 4px 10px; }
+.deps li { margin: 8px 0; font-size: .92rem; } .deps li b { display: block; }
+.mdtbl td.model { font-weight: 600; }
+.mdtbl td.na { color: var(--muted); }
+.lrtbl td, .lrtbl th { font-size: .85rem; }
+@media (max-width: 900px) { .mdwrap { flex-direction: column; align-items: stretch; } .mdside { flex-basis: auto; position: static; max-height: none; } }
+.card, .eqcard { overflow-x: auto; }   /* wide tables scroll inside their card on narrow screens */
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="brand" href="#overview">NAM-type model of Norway</a>
+  <a class="tab" href="#overview" data-tab="overview">Overview</a>
+  <a class="tab" href="#forecast" data-tab="forecast">Forecast</a>
+  <a class="tab" href="#policy" data-tab="policy">Policy</a>
+  <a class="tab" href="#equations" data-tab="equations">Equations</a>
+  <a class="tab" href="#robustness" data-tab="robustness">Robustness</a>
+  <a class="tab" href="#record" data-tab="record">Forecasting record</a>
+  <a class="tab" href="#notes" data-tab="notes">Notes & sources</a>
+  <button id="themeBtn" title="Toggle light / dark">☾</button>
+</div></nav>
+
+<main class="wrap">
+
+<!-- ================================================================ overview -->
+<section class="pane" id="pane-overview">
+  <div class="ovhead">
+    <div>
+      <h1>A small macroeconometric model of Norway <small>in the NAM tradition of Bårdsen, Eitrheim, Jansen and Nymoen</small></h1>
+      <p class="lede" id="mdLede"></p>
+    </div>
+    <aside class="agentbox" id="mdAgent"></aside>
+  </div>
+  <div class="tiles" id="mdTiles"></div>
+  <div class="card" id="mdWhat"></div>
+
+  <div class="guide">
+    <a class="card" href="#forecast"><b>Forecast</b><span>The system simulated from the last national-accounts quarter under Norges Bank's rate path or a policy rule, with bootstrap bands and the published projections beside it.</span></a>
+    <a class="card" href="#policy"><b>Policy</b><span>A permanent +100 basis points, the loss function of Akram, Bårdsen and Eitrheim (2005) by stochastic simulation, and every coefficient on a slider.</span></a>
+    <a class="card" href="#equations"><b>Equations</b><span>Each estimated equation with its published counterpart, standard errors, diagnostics and recursive tests; the imposed long-run relations against free estimates; the implied equilibrium unemployment rate.</span></a>
+    <a class="card" href="#robustness"><b>Robustness</b><span>Indicator saturation, super-exogeneity tests, the New Keynesian Phillips curve against the EqCM, recursive cointegration, OLS against 2SLS.</span></a>
+    <a class="card" href="#record"><b>Forecasting record</b><span>Dynamic simulation over the sample and a rolling pseudo-out-of-sample evaluation from 77 origins against a dVAR, intercept correction, no change and an AR(4).</span></a>
+    <a class="card" href="#notes"><b>Notes and sources</b><span>Departures from the published model, the additions beyond it, the sources read and the files in the repository.</span></a>
+  </div>
+</section>
+
+<!-- ================================================================ forecast -->
+<section class="pane" id="pane-forecast">
+  <div class="block" id="mdForecastBlock">
+    <h2>Forecast <small class="note" id="mdHorizon"></small></h2>
+    <p class="lede">Dynamic simulation from the last national-accounts quarter with the exogenous variables continued on the stated assumptions. The policy rate follows Norges Bank's published path unless a rule is selected. The policy-rate setting and the exogenous assumptions are chosen in the panel; the coefficients are moved on the <a href="#policy">Policy</a> tab. The charts re-simulate in the browser. Nothing here is a forecast by the authors of the model.</p>
+    <div class="mdwrap">
+      <div class="mdmain">
+        <div class="grid3" id="mdFcGrid">
+          <div class="card"><h3>CPI inflation <small>four-quarter, %</small></h3><div id="mdFc_infl4" class="plot"></div></div>
+          <div class="card"><h3>CPI-ATE inflation <small>four-quarter, %</small></h3><div id="mdFc_infl4u" class="plot"></div></div>
+          <div class="card"><h3>Unemployment <small id="mdFcUlab">registered rate, %</small></h3><div id="mdFc_u" class="plot"></div></div>
+          <div class="card"><h3>Mainland GDP <small>four-quarter growth, %</small></h3><div id="mdFc_g4y" class="plot"></div></div>
+          <div class="card"><h3>Exchange rate <small>I-44, up = weaker krone</small></h3><div id="mdFc_i44" class="plot"></div></div>
+          <div class="card"><h3>Policy rate <small>%</small></h3><div id="mdFc_R" class="plot"></div></div>
+        </div>
+        <div class="note" id="mdFcNote"></div>
+        <div class="card"><h3>Annual averages <small>model against the published projections</small></h3><div id="mdAnnual"></div><div class="note" id="mdAnnualNote"></div></div>
+      </div>
+      <aside class="mdside" id="mdSide">
+        <div class="nsec"><div class="nh">Policy rate</div>
+          <label><input type="radio" name="mdRule" value="exo" checked> exogenous: Norges Bank's path</label>
+          <label><input type="radio" name="mdRule" value="flx"> FLX rule (ABE2005)</label>
+          <label><input type="radio" name="mdRule" value="sm"> SM smoothing rule (ABE2005)</label>
+          <label><input type="radio" name="mdRule" value="est"> estimated reaction function</label>
+          <label class="sub"><select id="mdRpath" class="num" style="width:auto"><option value="nb">MPR 3/26 path, then constant</option><option value="const">constant at the last quarter</option></select></label>
+        </div>
+        <div class="nh">Exogenous assumptions</div>
+        <div id="mdAssume"></div>
+        <div class="note">The model's coefficients and the rule parameters are set on the <a href="#policy">Policy</a> tab; they feed this forecast too. The bands are recomputed for every setting.</div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ policy -->
+<section class="pane" id="pane-policy">
+  <div class="block" id="mdShockBlock">
+    <h2>A permanent +100 basis points <small class="note">differences from the baseline, quarters after the shock</small></h2>
+    <p class="lede" id="mdShockLede"></p>
+    <div class="mdwrap">
+      <div class="mdmain">
+        <div class="grid3">
+          <div class="card"><h3>CPI inflation <small>pp</small></h3><div id="mdSh_infl4" class="plot"></div></div>
+          <div class="card"><h3>CPI-ATE inflation <small>pp</small></h3><div id="mdSh_infl4u" class="plot"></div></div>
+          <div class="card"><h3>Unemployment rate <small>pp</small></h3><div id="mdSh_u_pp" class="plot"></div></div>
+          <div class="card"><h3>GDP growth <small>four-quarter, pp</small></h3><div id="mdSh_g4y" class="plot"></div></div>
+          <div class="card"><h3>Exchange rate level <small>%, negative = stronger krone</small></h3><div id="mdSh_v_level" class="plot"></div></div>
+          <div class="card"><h3>Real-wage growth <small>four-quarter, pp</small></h3><div id="mdSh_g4rw" class="plot"></div></div>
+        </div>
+        <div class="note" id="mdShockNote"></div>
+      </div>
+      <aside class="mdside" id="mdSide2">
+        <div class="nh">Model coefficients <span class="note" style="display:inline;margin:0;text-transform:none;letter-spacing:0">— pick an equation</span></div>
+        <div class="pick" id="mdEqPick"></div>
+        <div class="eqpanel">
+          <div class="eqg" data-g="rule" hidden><div class="eqgh">Policy-rule parameters <small>used by the FLX and SM rules</small></div><div id="mdRuleParams"></div></div>
+          <div class="eqg" data-g="lr" hidden><div class="eqgh">Long-run relations <small>imposed cointegrating coefficients</small></div><div id="mdLrParams"></div></div>
+          <div id="mdSliders"></div>
+        </div>
+        <div class="chips" id="mdChanged"></div>
+        <button type="button" class="btn" id="mdReset">Reset all to the estimates</button>
+        <div class="note">These coefficients drive the responses here and the <a href="#forecast">Forecast</a> tab. Moving a coefficient re-centres that equation's constant so its mean fit over the sample is unchanged; nothing is re-estimated in the browser. Full tables with standard errors and tests are on the <a href="#equations">Equations</a> tab.</div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="block" id="mdLossBlock">
+    <h2>Which rate setting does best? <small class="note">the loss function of Akram, Bårdsen and Eitrheim (2005), by stochastic simulation</small></h2>
+    <p class="lede" id="mdLossLede"></p>
+    <div class="losswrap">
+      <div class="card lossmain">
+        <div class="lossctl"><label>λ (weight on output growth) <input type="number" class="num" id="mdLossLam" value="0.5" step="0.1" min="0" max="5"></label><label>κ (weight on rate changes) <input type="number" class="num" id="mdLossKap" value="0.1" step="0.1" min="0" max="5"></label><span class="note" id="mdLossState"></span></div>
+        <div id="mdLossTable"></div>
+      </div>
+      <div class="card losschart"><h3>Loss by setting <small>V[Δ₄pu] + λV[Δ₄y] + κV[ΔR]</small></h3><div id="mdLossPlot" class="plot"></div></div>
+    </div>
+    <div class="note" id="mdLossNote"></div>
+  </div>
+</section>
+
+<!-- ================================================================ equations -->
+<section class="pane" id="pane-equations">
+  <div class="block" id="mdEqBlock">
+    <h2>The equations <small class="note" id="mdEqSub"></small></h2>
+    <p class="lede" id="mdEqLede"></p>
+    <div class="eqtools"><button type="button" class="btn" id="mdEqOpenAll">Open all equations</button><button type="button" class="btn" id="mdEqCloseAll">Close all</button></div>
+    <div id="mdEqs"></div>
+    <div class="card"><h3>Residual correlations <small>across the six core equations</small></h3><div id="mdResCorr"></div></div>
+  </div>
+
+  <div class="block" id="mdLrBlock">
+    <h2>Long-run relations: imposed against estimated freely</h2>
+    <p class="lede">The published cointegrating coefficients are imposed, as the authors do (BN2008 §2.5, NAM2026 §5.1). Beside each, what the dashboard's own sample says when the coefficients are left free.</p>
+    <div id="mdLongrun"></div>
+  </div>
+
+  <div class="block" id="mdUstarBlock">
+    <h2>The equilibrium rate of unemployment the wage–price block implies <small class="note">u*: where the wage curve and the price mark-up hold together</small></h2>
+    <p class="lede" id="mdUstarLede"></p>
+    <div class="ustarwrap">
+      <div class="card ustarmain"><h3>u* against the actual rate <small id="mdUstarSub">%</small></h3><div id="mdUstarPlot" class="plot"></div></div>
+      <div class="card ustartext" id="mdUstarText"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ robustness -->
+<section class="pane" id="pane-robustness">
+  <div class="block" id="mdRbBlock">
+    <h2>Breaks, invariance and encompassing <small class="note">the tests the authors would run next</small></h2>
+    <p class="lede">Five further checks on the estimated equations, in the order a referee from this tradition would ask for them: let the data find the breaks, test whether the equations are invariant to them, confront the inflation equation with the New Keynesian Phillips curve, check that the long-run relations are stable as the sample grows, and check that single-equation OLS has not been misled by a contemporaneous regressor.</p>
+    <div class="card"><h3>Indicator saturation <small>impulse (IIS) and step (SIS) indicators retained at α = 0.01, equations without their hand-picked dummies</small></h3><div id="mdRbSat"></div></div>
+    <div class="card" style="margin-top:14px"><h3>Super-exogeneity and the Lucas critique <small>breaks in the marginal processes added to the conditional equations</small></h3><div id="mdRbSx"></div></div>
+    <div class="card" style="margin-top:14px"><h3>The New Keynesian Phillips curve against the EqCM <small>2SLS; the encompassing tests of Bårdsen, Jansen and Nymoen (2004)</small></h3><div id="mdRbNk"></div></div>
+    <div class="card" style="margin-top:14px"><h3>Recursive cointegration <small>Johansen trace statistics and the first vector on samples ending at every quarter since 2005Q4</small></h3>
+      <div class="grid2"><div><div class="sub">Wage system (w − p, z, u): trace / 5% critical value</div><div id="mdRbRc_wage" class="plot"></div></div><div><div class="sub" id="mdRbRcLab_wage"></div><div id="mdRbRcC_wage" class="plot"></div></div>
+      <div><div class="sub">Price system (p − τ3, w + τ1 − z, pi): trace / 5% critical value</div><div id="mdRbRc_price" class="plot"></div></div><div><div class="sub" id="mdRbRcLab_price"></div><div id="mdRbRcC_price" class="plot"></div></div></div>
+      <div class="note" id="mdRbRcNote"></div></div>
+    <div class="card" style="margin-top:14px"><h3>OLS against 2SLS <small>equations with a contemporaneous endogenous regressor</small></h3><div id="mdRbIv"></div></div>
+  </div>
+</section>
+
+<!-- ================================================================ record -->
+<section class="pane" id="pane-record">
+  <div class="block" id="mdTrackBlock">
+    <h2>How far the system drifts on its own <small class="note" id="mdTrackSub"></small></h2>
+    <p class="lede" id="mdTrackLede"></p>
+    <div class="grid3">
+      <div class="card"><h3>CPI inflation <small>%</small></h3><div id="mdTr_infl4" class="plot"></div></div>
+      <div class="card"><h3>Unemployment <small>%</small></h3><div id="mdTr_u" class="plot"></div></div>
+      <div class="card"><h3>GDP growth <small>four-quarter, %</small></h3><div id="mdTr_g4y" class="plot"></div></div>
+    </div>
+  </div>
+
+  <div class="block" id="mdFeBlock">
+    <h2>Forecasting record <small class="note" id="mdFeSub"></small></h2>
+    <p class="lede" id="mdFeLede"></p>
+    <div class="eqtools fectl"><span class="note">Paths from every origin:</span>
+      <label><input type="radio" name="mdFeModel" value="eqcm" checked> the model (EqCM)</label>
+      <label><input type="radio" name="mdFeModel" value="dvar"> dVAR, level terms dropped</label>
+      <label><input type="radio" name="mdFeModel" value="ic"> intercept-corrected</label>
+      <label style="margin-left:auto"><input type="checkbox" id="mdFeXc"> leave the Covid quarters 2020Q1–2021Q4 out of the error statistics</label></div>
+    <div class="grid3">
+      <div class="card"><h3>CPI inflation <small>four-quarter, %</small></h3><div id="mdFeH_infl4" class="plot"></div></div>
+      <div class="card"><h3>Unemployment <small>registered rate, %</small></h3><div id="mdFeH_u" class="plot"></div></div>
+      <div class="card"><h3>Mainland GDP <small>four-quarter growth, %</small></h3><div id="mdFeH_g4y" class="plot"></div></div>
+    </div>
+    <div class="grid3" style="margin-top:14px">
+      <div class="card"><h3>RMSFE by horizon: CPI inflation <small>pp</small></h3><div id="mdFeR_infl4" class="plot"></div></div>
+      <div class="card"><h3>RMSFE by horizon: unemployment <small>pp</small></h3><div id="mdFeR_u" class="plot"></div></div>
+      <div class="card"><h3>RMSFE by horizon: GDP growth <small>pp</small></h3><div id="mdFeR_g4y" class="plot"></div></div>
+    </div>
+    <div class="card" style="margin-top:14px"><h3>Root mean squared forecast errors <small>by horizon in quarters; in brackets the ratio to the model; bias at four quarters; Diebold–Mariano test against the model: * p &lt; 0.05, ** p &lt; 0.01</small></h3><div id="mdFeTable"></div></div>
+    <div class="card" style="margin-top:14px"><h3>Where the model failed <small>four-quarter-ahead errors of the model, actual minus forecast, by target quarter</small></h3><div id="mdFeE" class="plot"></div></div>
+    <div class="note" id="mdFeNote"></div>
+  </div>
+</section>
+
+<!-- ================================================================ notes -->
+<section class="pane" id="pane-notes">
+  <div class="block" id="mdDepBlock">
+    <h2>Departures from the published model</h2>
+    <p class="lede">What was changed, and why, between the papers and this page.</p>
+    <div class="card"><ol class="deps" id="mdDeps"></ol></div>
+    <h2 style="margin-top:28px">Additions beyond the published model</h2>
+    <p class="lede">Three exercises the papers suggest but the published model does not ship with; each is described with its design and its limits.</p>
+    <div class="card"><ol class="deps" id="mdAdds"></ol></div>
+    <h2 style="margin-top:28px">Sources and files</h2>
+    <div class="card"><ul class="facts" id="mdSources"></ul><div class="note" id="mdFiles"></div></div>
+  </div>
+</section>
+
+<section class="pane" id="pane-press">
+  <h2>In the press</h2>
+  <p class="lede" id="pressLede"></p>
+  <div class="tiles" id="pressTiles"></div>
+  <div class="card" id="clipsCard">
+    <h3>Newspaper clippings <small>National Library of Norway, nb.no</small></h3>
+    <div class="filters">
+      <select id="clipDecade"><option value="">All decades</option></select>
+      <select id="clipPaper"><option value="">All newspapers</option></select>
+      <label class="note"><input type="checkbox" id="clipAll"> include likely mentions (unverified text or library-only issues)</label>
+      <span class="note" id="clipCount"></span>
+    </div>
+    <div class="clips" id="clips"></div>
+    <div class="note">Clippings are cut from the library's page scans using the OCR layout; the text is OCR and may contain errors. Issues marked "library only" can be read on nb.no from inside Norway or at a library.</div>
+  </div>
+  <div class="card" id="videoCard"><h3>Video &amp; audio <small>TV, recorded talks and podcasts</small></h3><div class="videos" id="videos"></div></div>
+  <div class="card" id="pressCard"><h3>Online articles, interviews and talks</h3><div class="press" id="pressList"></div></div>
+  <div class="card" id="aboutCard">
+    <h3>Written about him <small>reviews, acknowledgements and mentions by others</small></h3>
+    <p class="note" id="aboutLede"></p>
+    <div class="filters" id="aboutKinds"></div>
+    <div class="about" id="aboutList"></div>
+    <div class="note">Quotations are short and verbatim, in the original language, with a translation where needed. "Read" means the page or PDF was opened; "snippet" means only a search excerpt was seen, so the wording may be incomplete.</div>
+  </div>
+  <div class="card" id="archiveCard"><h3>Located in the newspaper archive, not yet read <small>nb.no full-text hits</small></h3><p class="note" id="archiveNote"></p><table class="plain" id="archiveTable"><thead><tr><th>Date</th><th>Newspaper</th><th>Page</th><th>Note</th></tr></thead><tbody></tbody></table></div>
+  <div class="card" id="galleryCard"><h3>Pictures</h3><div class="gallery" id="gallery"></div></div>
+</section>
+
+<footer>
+  <div id="foot"></div>
+</footer>
+</main>
+
+<script>/*__MODELSIM__*/</script>
+<script>
+const D = /*__DATA__*/null;
+const $ = s => document.querySelector(s);
+const fmt = n => (n == null ? "–" : Number(n).toLocaleString("en-US"));
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const isDark = () => document.documentElement.dataset.theme === "dark" || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+const short = (t, n = 58) => t.length > n ? t.slice(0, n - 2) + "…" : t;
+const hide = (sel, off) => { const el = $(sel); if (el) el.style.display = off ? "none" : ""; };
+function base(extra) {
+  return Object.assign({
+    paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)",
+    font: {family: "-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif", size: 12, color: css("--text-2")},
+    margin: {l: 48, r: 16, t: 8, b: 40}, hovermode: "closest",
+    hoverlabel: {bgcolor: css("--surface"), bordercolor: css("--line"), font: {color: css("--text"), size: 12}},
+    xaxis: {gridcolor: css("--grid"), zeroline: false, linecolor: css("--line"), tickfont: {color: css("--text-2")}},
+    yaxis: {gridcolor: css("--grid"), zeroline: false, linecolor: css("--line"), tickfont: {color: css("--text-2")}},
+    legend: {orientation: "h", y: 1.12, x: 0, font: {color: css("--text-2")}, bgcolor: "rgba(0,0,0,0)"},
+  }, extra || {});
+}
+const CFG = {displayModeBar: false, responsive: true};
+function plot(id, traces, layout, cfg) { Plotly.react(id, traces, base(layout), cfg || CFG); }
+function openOnClick(id) { document.getElementById(id).on("plotly_click", e => { const u = e.points[0]?.customdata?.url; if (typeof u === "string" && u.startsWith("http")) window.open(u, "_blank"); }); }
+const axis = extra => Object.assign({gridcolor: css("--grid"), zeroline: false, linecolor: css("--line"), tickfont: {color: css("--text-2")}}, extra);
+
+// ---------------------------------------------------------------- model tab
+const MD = D;
+let mdState = null;   // user-set parameters: {P (raw values), assume, rule, rpath, rsPath}
+const mdClone = o => JSON.parse(JSON.stringify(o));
+const mdX = q => +q.slice(0, 4) + (+q.slice(5) - 1) / 4;     // "2026Q3" -> 2026.5 (numeric axis)
+const mdN = (x, d = 2) => (x == null || Number.isNaN(x) ? "–" : (+x).toFixed(d));
+const mdSig = (x, d = 3) => (x == null ? "–" : Math.abs(x) >= 100 ? (+x).toFixed(0) : Math.abs(x) >= 10 ? (+x).toFixed(1) : Math.abs(x) >= 1 ? (+x).toFixed(2) : (+x).toFixed(d));
+const mdForm = t => esc(t).replace(/EqCM_([a-z]+),t−(\d)/g, "EqCM<sub>$1,t−$2</sub>").replace(/_\{([^}]+)\}/g, "<sub>$1</sub>").replace(/_t\b/g, "<sub>t</sub>").replace(/_(pi|w|p|v|u|y)\b/g, "<sub>$1</sub>");
+const MD_SLIDER_EQS = ["wage", "price", "imp", "fx", "fx_level", "unemp", "output", "mm", "bridge", "rule_est"];
+const MD_LR_DEF = {gamma_u: 0.1, phi: 0.4, y_g: 0.9, y_rex: 0.16, y_rr: 0.06};
+const MD_NAMES = {wage: "Wages", price: "Consumer prices", imp: "Import prices", fx: "Exchange rate", fx_level: "Exchange rate (PPP version)", unemp: "Unemployment", output: "Mainland GDP", mm: "Money-market rate", bridge: "CPI-ATE bridge", rule_est: "Reaction function"};
+const MD_RULE_LAB = {theta_pi: "θ_pi", theta_y: "θ_y", rho: "ρ", rr_bar: "r̄r", pi_bar: "π̄", g_bar: "ḡ"}, MD_LR_LAB = {gamma_u: "γ_u", phi: "ϕ", y_g: "output: g", y_rex: "output: rex", y_rr: "output: rr", use_alpha_v: "PPP anchor"};
+let mdPicked = "wage";
+function mdPick(g) {
+  mdPicked = g;
+  document.querySelectorAll("#mdSide2 .eqg").forEach(d => { d.hidden = d.dataset.g !== g; });
+  document.querySelectorAll("#mdEqPick button").forEach(b => b.classList.toggle("on", b.dataset.g === g));
+}
+// what differs from the estimates: one chip per item, badges on the picker, the live equation lines
+function mdChangedList() {
+  const E = MD.estimates, SM = MD.simulation, P = mdState.P, out = [];
+  for (const k in P.rule) if (k !== "kind" && Math.abs(P.rule[k] - SM.params.rule[k]) > 1e-9) out.push({g: "rule", kind: "rule", a: k, text: `${MD_RULE_LAB[k] || k} ${mdSig(P.rule[k])}`});
+  for (const k in P.lr) if (k in MD_LR_LAB && (k === "use_alpha_v" ? !!P.lr[k] !== !!SM.params.lr[k] : Math.abs(P.lr[k] - SM.params.lr[k]) > 1e-9)) out.push({g: "lr", kind: "lr", a: k, text: k === "use_alpha_v" ? "PPP anchor on" : `${MD_LR_LAB[k]} ${mdSig(P.lr[k])}`});
+  for (const k of MD_SLIDER_EQS) { const eq = E.equations[k]; if (!eq) continue;
+    for (const c of eq.coef) if (c.kind === "reg" && Math.abs(P.eq[k][c.name] - c.est) > 1e-9) out.push({g: k, kind: "eq", a: k, b: c.name, text: `${MD_NAMES[k]}: ${c.label.split(" = ")[0]} ${mdSig(P.eq[k][c.name])} (est ${mdSig(c.est)})`}); }
+  return out;
+}
+function mdResetOne(kind, a, b) {
+  const SM = MD.simulation, P = mdState.P;
+  if (kind === "rule") P.rule[a] = SM.params.rule[a]; else if (kind === "lr") P.lr[a] = SM.params.lr[a]; else P.eq[a][b] = MD.estimates.equations[a].coef.find(c => c.name === b).est;
+}
+function mdSideRefresh() {
+  const E = MD.estimates, P = mdState.P, ch = mdChangedList(), per = {};
+  ch.forEach(x => { per[x.g] = (per[x.g] || 0) + 1; });
+  document.querySelectorAll("#mdEqPick button").forEach(b => { const n = per[b.dataset.g] || 0; b.classList.toggle("has", n > 0); b.querySelector(".bd").textContent = n; });
+  $("#mdChanged").innerHTML = ch.length ? `<span>Changed:</span>` + ch.map(x => `<button type="button" data-kind="${x.kind}" data-a="${x.a}" data-b="${x.b || ""}" title="reset this one">${mdForm(x.text)} ×</button>`).join("") : `<span>All coefficients at their estimates.</span>`;
+  for (const k of MD_SLIDER_EQS) { const eq = E.equations[k], el = document.getElementById("mdLine_" + k); if (!eq || !el) continue;
+    const terms = eq.coef.filter(c => c.kind === "reg").map((c, i) => { const x = P.eq[k][c.name], chg = Math.abs(x - c.est) > 1e-9; return `${i === 0 ? (x < 0 ? "−" : "") : x < 0 ? " − " : " + "}<b class="${chg ? "chg" : ""}">${mdSig(Math.abs(x))}</b>·${mdForm(c.label.split(" = ")[0])}`; });
+    const extra = eq.coef.filter(c => c.kind === "dummy").length, seas = eq.coef.some(c => c.kind === "seasonal");
+    el.innerHTML = `${mdForm(eq.lhs_label.split(" (")[0])}<sub>t</sub> = c + ${terms.join("")}${seas ? " + seasonals" : ""}${extra ? ` + ${extra} impulse ${extra > 1 ? "dummies" : "dummy"}` : ""}`;
+  }
+}
+
+function mdDefaults() {
+  const SM = MD.simulation;
+  return {P: mdClone(SM.params), assume: mdClone(SM.assumptions), rule: "exo", rpath: "nb", rsPath: "nb"};
+}
+function mdIsDefault() {
+  const d = mdDefaults(), s = mdState;
+  const same = (a, b) => { if (typeof a === "number" && typeof b === "number") return Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a)); if (a && typeof a === "object") return Object.keys(a).every(k => same(a[k], b[k])); return a === b; };
+  return s.rule === "exo" && s.rpath === "nb" && s.rsPath === "nb" && same(d.P, s.P) && same(d.assume, s.assume);
+}
+// effective parameters: the user's values with each equation's constant re-centred (see the note in the side panel)
+function mdEffective() {
+  const E = MD.estimates, P = mdClone(mdState.P), means = E.longrun.means;
+  for (const k of MD_SLIDER_EQS) {
+    const eq = E.equations[k]; if (!eq) continue;
+    let shift = 0;
+    for (const c of eq.coef) if (c.name !== "const" && c.name in P.eq[k]) shift += (P.eq[k][c.name] - c.est) * c.mean;
+    P.eq[k].const = eq.coef.find(c => c.name === "const").est - shift;
+  }
+  const lr = P.lr;
+  P.eq.wage.const -= P.eq.wage.ecm_w_l4 * (lr.gamma_u - MD_LR_DEF.gamma_u) * means.u_l4;
+  P.eq.price.const -= P.eq.price.ecm_p_l1 * (lr.phi - MD_LR_DEF.phi) * means.ulc_minus_pi_l1;
+  P.eq.output.const -= P.eq.output.ecm_y_l1 * (-(lr.y_g - MD_LR_DEF.y_g) * means.g_l1 - (lr.y_rex - MD_LR_DEF.y_rex) * means.rex_l1 + (lr.y_rr - MD_LR_DEF.y_rr) * means.rr_l1);
+  P.rule.kind = mdState.rule;
+  return P;
+}
+function mdInputs() {
+  const inp = mdClone(MD.simulation.sim_inputs);
+  if (mdState.rpath === "const") { const o = inp.origin_pos; for (let i = o + 1; i < inp.T; i++) inp.R_path[i] = inp.R_path[o]; }
+  return inp;
+}
+function mdAssume() { const a = mdClone(mdState.assume); if (mdState.rsPath === "const") a.Rs_path = {}; return a; }
+
+function modelTab() {
+  if (!MD || !modelSim) { $("#mdLede").textContent = "The model has not been run yet."; document.querySelectorAll("section.pane .block, #mdWhat, #mdTiles, .guide").forEach(e => e.style.display = "none"); return; }
+  const E = MD.estimates, SM = MD.simulation, cfg = E.config;
+  if (!mdState) mdState = mdDefaults();
+  const nEq = Object.keys(E.equations).length;
+  $("#mdLede").innerHTML = `A quarterly equilibrium-correction model of wages, prices, import prices, the exchange rate, unemployment and output, in the form of
+    <a href="https://www.norges-bank.no/en/news-events/publications/Working-Papers/2002/wp-20025/" target="_blank" rel="noopener">Bårdsen, Jansen and Nymoen (2003)</a>,
+    <a href="https://www.norges-bank.no/en/news-events/publications/Working-Papers/2005/wp-20059/" target="_blank" rel="noopener">Akram, Bårdsen and Eitrheim (2005)</a> and Bårdsen and Nymoen's
+    <a href="https://www.normetrics.no/" target="_blank" rel="noopener">Norwegian Aggregate Model</a>, re-estimated on public data from Statistics Norway and Norges Bank. The long-run coefficients are the
+    published ones; the short-run dynamics are estimated here. It is a re-implementation in the spirit of the book, not the authors' model.`;
+  $("#mdTiles").innerHTML = [
+    [`${E.sample[0]}–${E.sample[1]}`, "estimation sample", `${E.equations.wage.T} quarters`],
+    [nEq, "equations", "OLS, seasonal dummies, imposed long run"],
+    [SM.origin, "forecast origin", `last national-accounts quarter; monthly data to ${E.last_quarter.monthly}`],
+    [E.data_vintage, "data vintage", `estimated ${E.built}`],
+    [cfg.u === "reg" ? "registered" : "LFS", "unemployment measure", cfg.pi === "trad" ? "traditional-goods import deflator" : "total import deflator"],
+  ].map(([n, l, s]) => `<div class="tile"><div class="n" style="font-size:1.3rem">${esc(n)}</div><div class="l">${esc(l)}</div><div class="s">${esc(s)}</div></div>`).join("");
+  $("#mdWhat").innerHTML = `<h3>What this is, and is not</h3>
+    <p>The wage–price core follows the two long-run relations of Bårdsen, Jansen and Nymoen (2003, Table 1): real hourly wages equal productivity less 0.1 times (log) unemployment, and consumer prices are a 0.6/0.4 mark-up over unit labour costs and import prices. Around them sit the import-price, exchange-rate, unemployment and output equations in the forms of Bårdsen and Nymoen (2008) and of the 2026 NAM documentation, a money-market equation, a CPI-ATE bridge and three ways of setting the policy rate. Every equation shows its published counterpart, its own coefficients with standard errors, the authors' diagnostic battery and recursive tests.</p>
+    <p>What it is not: the authors' RIMINI- and FPAS-based data are not public, the quarterly hourly wage exists only from 1995, and the departures from the originals are listed under <a href="#notes">Notes and sources</a>. The policy-rule experiments use Akram, Bårdsen and Eitrheim's rules with their parameters. The forecasts are what this estimated system produces under stated assumptions; the comparison with Norges Bank's and LO/NAM's published projections is a check on plausibility, not a claim of comparable quality.</p>
+    <p class="note">Decisions taken for this version: estimation from ${E.sample[0]} (the 2001 inflation-targeting break is tested); ${cfg.u === "reg" ? "registered" : "LFS"} unemployment; published long-run coefficients imposed with free estimates shown; Covid ${cfg.covid === "dummies" ? "impulse dummies where significant" : "quarters excluded"}; Norges Bank's rate path as the baseline.</p>`;
+  mdAgent();
+  $("#mdHorizon").textContent = `${SM.horizon[0]} – ${SM.horizon[1]}`;
+  $("#mdFcUlab").textContent = cfg.u === "reg" ? "registered rate, %" : "LFS rate, %";
+}
+
+// ---- side panel
+function mdBuildSide() {
+  if ($("#mdSliders").dataset.built) return;
+  const E = MD.estimates, SM = MD.simulation, P = mdState.P;
+  const numRow = (id, label, val, step, lo, hi) => `<div class="sl" data-id="${id}"><div class="lab"><span>${label}</span></div><input type="range" id="${id}_r" min="${lo}" max="${hi}" step="${step}" value="${val}"><input class="num val" type="number" id="${id}" value="${val}" step="any"></div>`;
+  $("#mdRuleParams").innerHTML = numRow("mdR_theta_pi", "θ<sub>π</sub> on (Δ₄pu − π̄)", P.rule.theta_pi, 0.05, 0, 3) + numRow("mdR_theta_y", "θ<sub>y</sub> on (Δ₄y − ḡ)", P.rule.theta_y, 0.05, 0, 2)
+    + numRow("mdR_rho", "ρ smoothing (SM rule)", P.rule.rho, 0.05, 0, 0.95) + numRow("mdR_rr_bar", "r̄r equilibrium real rate, %", P.rule.rr_bar, 0.25, 0, 5) + numRow("mdR_pi_bar", "π̄ target, %", P.rule.pi_bar, 0.25, 0, 4) + numRow("mdR_g_bar", "ḡ trend growth, %", P.rule.g_bar, 0.25, 0, 4)
+    + `<div class="note">ABE2005 Table 1: FLX θ<sub>π</sub> = 1.5, θ<sub>y</sub> = 0.5; SM adds ρ = 0.75; π̄ + r̄r = 6 (π̄ = 2.5 then; 2.0 here), ḡ = 2.5. r̄r = 3.5 is the 2005 value; Norges Bank's current estimates of the neutral real rate are far lower.</div>`;
+  const means = E.longrun.means;
+  $("#mdLrParams").innerHTML = numRow("mdL_gamma_u", "γ<sub>u</sub> wage curve (BJN 0.1; NAM2026 0.12)", P.lr.gamma_u, 0.01, 0, 0.5) + numRow("mdL_phi", "ϕ import-price weight in CPI (BJN 0.4)", P.lr.phi, 0.01, 0, 1)
+    + numRow("mdL_y_g", "output: weight on g (BN2008 0.9)", P.lr.y_g, 0.01, 0, 1.5) + numRow("mdL_y_rex", "output: real exchange rate (0.16)", P.lr.y_rex, 0.01, 0, 0.5) + numRow("mdL_y_rr", "output: real rate (0.06)", P.lr.y_rr, 0.005, 0, 0.2)
+    + `<label style="margin-top:6px"><input type="checkbox" id="mdL_ppp"> PPP anchor in the exchange rate (BN2008 eq 36, α<sub>v</sub> = ${mdN(E.longrun.fx.alpha_v, 4)}, t ${mdN(E.longrun.fx.alpha_v_t, 1)})</label>`;
+  const A = SM.assumptions;
+  $("#mdAssume").innerHTML = numRow("mdA_z_growth", "productivity z, four-quarter growth %", A.z_growth, 0.1, -2, 5) + numRow("mdA_g_growth", "public consumption g, growth %", A.g_growth, 0.1, -2, 5)
+    + numRow("mdA_pf_infl", "foreign producer prices pf, %", A.pf_infl, 0.1, -4, 8) + numRow("mdA_pstar_infl", "foreign consumer prices p*, %", A.pstar_infl, 0.1, -2, 8) + numRow("mdA_pen_infl", "energy prices pe, %", A.pen_infl, 0.5, -15, 15)
+    + `<div class="kv"><span>foreign short rate R*</span><select id="mdA_rs" class="num" style="width:auto"><option value="nb">Norges Bank's trading-partner path</option><option value="const">constant</option></select></div>`
+    + `<div class="note">${esc(A.labels.Rs_path)}. ${esc(A.labels.oil)}; ${esc(A.labels.t1_t3)}; ${esc(A.labels.ytrend)}. Defaults for z and g are their average growth over the last ten years.</div>`;
+  // short-run sliders, one group per equation
+  const names = MD_NAMES, eqKeys = MD_SLIDER_EQS.filter(k => E.equations[k]);
+  $("#mdSliders").innerHTML = eqKeys.map(k => {
+    const eq = E.equations[k], rows = eq.coef.filter(c => c.kind === "reg").map(c => {
+      const span = Math.max(4 * c.se, Math.abs(c.est) * 0.75, 1e-4), lo = c.est - span, hi = c.est + span, step = span / 100;
+      return `<div class="sl" data-eq="${k}" data-c="${esc(c.name)}"><div class="lab"><span>${mdForm(c.label.split(" = ")[0])} <span class="pub">(se ${mdSig(c.se)})</span></span><span class="pub" title="${esc(c.published ? c.published[1] : "")}">${c.published ? "published " + esc(c.published[0].split(" (")[0]) : ""}</span></div>
+        <input type="range" min="${lo.toFixed(6)}" max="${hi.toFixed(6)}" step="${step.toFixed(7)}" value="${c.est}"><input type="number" class="num val" step="any" value="${+c.est.toPrecision(6)}"></div>`;
+    }).join("");
+    return `<div class="eqg" data-g="${k}" hidden><div class="eqgh">${esc(eq.label)} <small>${esc(eq.lhs_label)}</small></div><div class="eqline" id="mdLine_${k}"></div>${rows}</div>`;
+  }).join("");
+  $("#mdEqPick").innerHTML = [["rule", "Policy rule"], ["lr", "Long run"], ...eqKeys.map(k => [k, names[k]])].map(([g, n]) => `<button type="button" data-g="${g}">${esc(n)}<span class="bd"></span></button>`).join("");
+  $("#mdEqPick").addEventListener("click", e => { const b = e.target.closest("button"); if (b) mdPick(b.dataset.g); });
+  $("#mdChanged").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; mdResetOne(b.dataset.kind, b.dataset.a, b.dataset.b); mdWriteSide(); mdUpdate(); });
+  mdPick("wage");
+  $("#mdSliders").dataset.built = "1";
+  // wiring
+  const upd = () => { mdReadSide(); mdUpdate(); };
+  document.querySelectorAll("input[name=mdRule]").forEach(r => r.addEventListener("change", upd));
+  ["#mdRpath", "#mdA_rs", "#mdL_ppp"].forEach(s => $(s).addEventListener("change", upd));
+  for (const box of ["#mdRuleParams", "#mdLrParams", "#mdAssume", "#mdSliders"]) {
+    $(box).addEventListener("input", e => { const r = e.target.closest(".sl"); if (!r || e.target.type !== "range") return; r.querySelector("input[type=number]").value = +(+e.target.value).toPrecision(6); mdReadSide(); mdUpdate(true); });
+    $(box).addEventListener("change", e => { if (e.target.type !== "number") return; const r = e.target.closest(".sl"); if (r) r.querySelector("input[type=range]").value = e.target.value; upd(); });
+  }
+  $("#mdReset").addEventListener("click", () => { mdState = mdDefaults(); mdWriteSide(); mdUpdate(); });
+  mdWriteSide();
+}
+const MD_DEF_IDS = () => { const d = mdDefaults(), o = {}; for (const k in d.P.rule) if (k !== "kind") o["mdR_" + k] = d.P.rule[k]; for (const k of ["gamma_u", "phi", "y_g", "y_rex", "y_rr"]) o["mdL_" + k] = d.P.lr[k]; for (const k of ["z_growth", "g_growth", "pf_infl", "pstar_infl", "pen_infl"]) o["mdA_" + k] = d.assume[k]; return o; };
+function mdReadSide() {
+  const DV = MD_DEF_IDS();
+  // a number box shows the default at 8 significant digits; reading it back within 1e-6 of the default means the default
+  const P = mdState.P, v = id => { const x = +$(id).value, dv = DV[id.slice(1)]; return dv != null && Math.abs(x - dv) <= 1e-6 * Math.max(1, Math.abs(dv)) ? dv : x; };
+  mdState.rule = document.querySelector("input[name=mdRule]:checked").value; mdState.rpath = $("#mdRpath").value; mdState.rsPath = $("#mdA_rs").value;
+  P.rule.theta_pi = v("#mdR_theta_pi"); P.rule.theta_y = v("#mdR_theta_y"); P.rule.rho = v("#mdR_rho"); P.rule.rr_bar = v("#mdR_rr_bar"); P.rule.pi_bar = v("#mdR_pi_bar"); P.rule.g_bar = v("#mdR_g_bar");
+  P.lr.gamma_u = v("#mdL_gamma_u"); P.lr.phi = v("#mdL_phi"); P.lr.y_g = v("#mdL_y_g"); P.lr.y_rex = v("#mdL_y_rex"); P.lr.y_rr = v("#mdL_y_rr"); P.lr.use_alpha_v = $("#mdL_ppp").checked;
+  for (const k of ["z_growth", "g_growth", "pf_infl", "pstar_infl", "pen_infl"]) mdState.assume[k] = v("#mdA_" + k);
+  for (const id in DV) $("#" + id).closest(".sl").classList.toggle("changed", v("#" + id) !== DV[id]);
+  document.querySelectorAll("#mdSliders .sl").forEach(r => {
+    const rg = r.querySelector("input[type=range]"), est = MD.estimates.equations[r.dataset.eq].coef.find(c => c.name === r.dataset.c).est;
+    let x = +r.querySelector("input[type=number]").value; if (Number.isNaN(x)) x = est;
+    if (Math.abs(x - est) < 0.6 * (+rg.step)) x = est;   // untouched or displayed at 6 digits: keep the exact estimate
+    P.eq[r.dataset.eq][r.dataset.c] = x; r.classList.toggle("changed", x !== est);
+  });
+  mdSideRefresh();
+}
+function mdWriteSide() {
+  const P = mdState.P, DV = MD_DEF_IDS(), set = (id, x) => { $(id).value = +(+x).toPrecision(8); const r = $(id + "_r"); if (r) r.value = x; $(id).closest(".sl").classList.toggle("changed", x !== DV[id.slice(1)]); };
+  document.querySelector(`input[name=mdRule][value=${mdState.rule}]`).checked = true; $("#mdRpath").value = mdState.rpath; $("#mdA_rs").value = mdState.rsPath;
+  set("#mdR_theta_pi", P.rule.theta_pi); set("#mdR_theta_y", P.rule.theta_y); set("#mdR_rho", P.rule.rho); set("#mdR_rr_bar", P.rule.rr_bar); set("#mdR_pi_bar", P.rule.pi_bar); set("#mdR_g_bar", P.rule.g_bar);
+  set("#mdL_gamma_u", P.lr.gamma_u); set("#mdL_phi", P.lr.phi); set("#mdL_y_g", P.lr.y_g); set("#mdL_y_rex", P.lr.y_rex); set("#mdL_y_rr", P.lr.y_rr); $("#mdL_ppp").checked = !!P.lr.use_alpha_v;
+  for (const k of ["z_growth", "g_growth", "pf_infl", "pstar_infl", "pen_infl"]) set("#mdA_" + k, mdState.assume[k]);
+  document.querySelectorAll("#mdSliders .sl").forEach(r => { const x = P.eq[r.dataset.eq][r.dataset.c], est = MD.estimates.equations[r.dataset.eq].coef.find(c => c.name === r.dataset.c).est; r.querySelector("input[type=range]").value = x; r.querySelector("input[type=number]").value = +x.toPrecision(6); r.classList.toggle("changed", Math.abs(x - est) > 1e-9); });
+  mdSideRefresh();
+}
+
+// ---- forecast charts, annual table, shock charts (everything that re-simulates)
+const MD_REPS = 500;
+let mdBands = null, mdBandsKey = "", mdBandTimer = null;
+function mdUpdate(deferBands) {
+  const E = MD.estimates, SM = MD.simulation, P = mdEffective(), inp = mdInputs(), A = mdAssume();
+  const f = modelSim.forecast(inp, P, A, 16, mdState.rule);
+  const isDef = mdIsDefault();
+  const bkey = JSON.stringify([P, A, inp.R_path, mdState.rule]);
+  if (bkey !== mdBandsKey) {
+    clearTimeout(mdBandTimer);
+    const run = () => { mdBands = modelSim.bootstrap(inp, P, A, 16, mdState.rule, SM.bands.resid_matrix, MD_REPS, 20261031).bands; mdBandsKey = bkey; };
+    if (deferBands) { mdBands = null; mdBandTimer = setTimeout(() => { run(); mdUpdate(); }, 150); } else run();
+  }
+  const H = SM.history, hi = H.index.findIndex(q => q >= "2016Q1"), hx = H.index.slice(hi).map(mdX), fx = f.index.map(mdX);
+  const nb = SM.norges_bank.variables, nbq = k => (nb[k] || []).filter(x => x.status === "projection");
+  const ragged = SM.ragged, rx = ragged.index.map(mdX);
+  const ruleName = {exo: "model, Norges Bank's rate path", flx: "model, FLX rule", sm: "model, SM rule", est: "model, estimated reaction function"}[mdState.rule];
+  const panels = [["infl4", "cpi_inflation", "infl4"], ["infl4u", "cpi_ate_inflation", "infl4u"], ["u", "unemployment_registered", "u"], ["g4y", "mainland_gdp_growth", "g4y"], ["i44", "i44", null], ["R", "policy_rate", "R"]];
+  for (const [key, nbKey, bandKey] of panels) {
+    const tr = [];
+    tr.push({x: hx, y: H[key].slice(hi), name: "actual", mode: "lines", line: {color: css("--text-2"), width: 1.6}, hovertemplate: "%{y:.2f}<extra>actual</extra>"});
+    if (ragged[key]) tr.push({x: rx, y: ragged[key], name: "observed since the origin", mode: "markers", marker: {color: css("--text-2"), size: 7, symbol: "diamond"}, hovertemplate: "%{y:.2f}<extra>observed</extra>"});
+    if (mdBands && bandKey && mdBands[bandKey]) {
+      const b = mdBands[bandKey], rgb = isDark() ? "57,135,229" : "42,120,214";
+      tr.push({x: fx, y: b.lo, mode: "lines", line: {width: 0}, showlegend: false, hoverinfo: "skip"});
+      tr.push({x: fx, y: b.hi, mode: "lines", line: {width: 0}, fill: "tonexty", fillcolor: `rgba(${rgb},.12)`, name: "5–95% bootstrap", hoverinfo: "skip"});
+      tr.push({x: fx, y: b.lo25, mode: "lines", line: {width: 0}, showlegend: false, hoverinfo: "skip"});
+      tr.push({x: fx, y: b.hi75, mode: "lines", line: {width: 0}, fill: "tonexty", fillcolor: `rgba(${rgb},.18)`, name: "25–75%", hoverinfo: "skip"});
+    }
+    tr.push({x: fx, y: f.out[key], name: ruleName, mode: "lines", line: {color: css("--s1"), width: 2.6}, hovertemplate: "%{y:.2f}<extra>model</extra>"});
+    const q = nbq(nbKey);
+    if (q.length && !(key === "R" && mdState.rule === "exo" && mdState.rpath === "nb")) tr.push({x: q.map(x => mdX(x.period)), y: q.map(x => x.value), name: "Norges Bank MPR 3/26", mode: "lines", line: {color: css("--s2"), width: 1.8, dash: "dash"}, hovertemplate: "%{y:.2f}<extra>Norges Bank</extra>"});
+    if (key === "R" && mdState.rule === "exo" && mdState.rpath === "nb") tr[tr.length - 1].name = "Norges Bank's path (exogenous)";
+    plot("mdFc_" + key, tr, {margin: {l: 40, r: 10, t: 24, b: 30}, xaxis: axis({range: [2016, mdX(f.index[f.index.length - 1]) + 0.3], dtick: 2}), yaxis: axis({}), showlegend: false, shapes: [{type: "line", x0: mdX(SM.origin) + 0.25, x1: mdX(SM.origin) + 0.25, y0: 0, y1: 1, yref: "paper", line: {color: css("--muted"), width: 1, dash: "dot"}}]});
+  }
+  $("#mdFcNote").innerHTML = `<span style="color:var(--text-2)">— actual &nbsp; ◆ observed since the origin &nbsp; <b style="color:var(--s1)">—</b> ${esc(ruleName)} &nbsp; <span style="color:var(--s2)">- -</span> Norges Bank MPR 3/26 &nbsp; shaded: 25–75% and 5–95% bootstrap bands</span><br>Bands: ${MD_REPS} bootstrap replications computed in the browser for the setting shown: residual vectors of the eight estimated equations resampled by quarter (keeping their cross-equation correlation) and added to the forecast quarters; 25–75% and 5–95% ranges of the resulting paths. Coefficient uncertainty is not included (NAM2026 reports 90% bands from stochastic simulation).` + (isDef ? "" : " <b>This setting differs from the estimates</b>: the residuals are still those of the estimated equations, so the bands describe the shock uncertainty of this scenario, not of a re-estimated model.")
+    + ` Norges Bank's paths are from the MPR 3/26 data file (${esc(SM.norges_bank.published)}); its unemployment is the seasonally adjusted registered rate${E.config.u === "lfs" ? ", a different concept from the LFS rate the model uses here" : ""}. Dotted line: forecast origin.`;
+  mdAnnual(f);
+  mdShock(P, inp, A);
+  mdUstar(P);
+  mdLoss(P, inp, A, deferBands);
+  mdMultBands(P, inp, A, deferBands);
+}
+
+// ---- coefficient-uncertainty bands of the +100 bp responses (exogenous-rate case): Python values at the estimates, browser otherwise
+let mdMB = null, mdMBKey = "", mdMBKey0 = null, mdMBTimer = null;
+function mdMultBands(P, inp, A, defer) {
+  const SM = MD.simulation, key = JSON.stringify([P, A, inp.R_path]);
+  if (mdMBKey0 === null && mdIsDefault()) mdMBKey0 = key;
+  if (key === mdMBKey) return;
+  clearTimeout(mdMBTimer);
+  const run = () => { if (key === mdMBKey0) mdMB = SM.shock.bands; else { const chol = {}; for (const k of SM.bands.resid_matrix.keys) chol[k] = MD.estimates.equations[k].chol; mdMB = modelSim.multiplierBands(inp, P, A, 48, "exo", chol, SM.shock.bands.reps, SM.shock.bands.seed).bands; } mdMBKey = key; mdShock(mdEffective(), mdInputs(), mdAssume()); };
+  if (defer) { mdMB = null; mdMBTimer = setTimeout(run, 300); } else run();
+}
+
+// ---- ABE2005 loss table: Python values at the estimates, recomputed in the browser for any other setting
+let mdLossKey = "", mdLossKey0 = null, mdLossRes = null, mdLossTimer = null;
+const MD_RULE_NAMES = {exo: "Norges Bank's path (exogenous rate)", flx: "FLX rule", sm: "SM smoothing rule", est: "Estimated reaction function"};
+function mdLoss(P, inp, A, defer) {
+  const SM = MD.simulation, key = JSON.stringify([P, A, inp.R_path]);
+  if (mdLossKey0 === null && mdIsDefault()) mdLossKey0 = key;
+  if (key === mdLossKey) { mdLossRender(); return; }
+  clearTimeout(mdLossTimer);
+  const run = () => { mdLossRes = key === mdLossKey0 ? SM.loss.rules : modelSim.lossSim(inp, P, A, SM.loss.h, ["exo", "flx", "sm", "est"], SM.bands.resid_matrix, MD_REPS, SM.loss.seed); mdLossKey = key; mdLossRender(); };
+  if (defer) { mdLossRes = null; mdLossRender(); mdLossTimer = setTimeout(run, 250); } else run();
+}
+function mdLossRender() {
+  const SM = MD.simulation, lam = +$("#mdLossLam").value || 0, kap = +$("#mdLossKap").value || 0, R = mdLossRes, kinds = ["exo", "flx", "sm", "est"], tgt = mdState.P.rule.pi_bar;
+  $("#mdLossLede").innerHTML = `Akram, Bårdsen and Eitrheim (2005, eq. 10) rank policy rules by L = V[Δ₄pu] + λV[Δ₄y] + κV[Δr]: the variances of CPI-ATE inflation, output growth and the change in the interest rate, with λ and κ the policymaker's weights. Here the same loss is formed from ${SM.loss.reps} stochastic simulations of ${SM.loss.h} quarters under each of the four rate settings on this page, with identical shocks, using the coefficients and rule parameters currently set. Nothing is optimised: the FLX and SM parameters are ABE's, the other two settings are what they are.`;
+  $("#mdLossState").textContent = R ? (mdLossKey === mdLossKey0 ? "at the estimated coefficients" : "recomputed for the current setting") : "recomputing…";
+  if (!R) { $("#mdLossTable").innerHTML = `<p class="note">Recomputing the ${SM.loss.reps} simulations under each setting…</p>`; return; }
+  const loss = k => R[k].var_pu + lam * R[k].var_gy + kap * R[k].var_dR, best = kinds.reduce((a, b) => loss(a) <= loss(b) ? a : b);
+  const col = (k, f) => kinds.reduce((a, b) => f(R[a]) <= f(R[b]) ? a : b) === k ? "best" : "";
+  $("#mdLossTable").innerHTML = `<table class="plain mdtbl"><thead><tr><th>rate setting</th><th class="num">sd Δ₄pu</th><th class="num">mean Δ₄pu</th><th class="num">RMS (Δ₄pu − π̄)</th><th class="num">sd Δ₄y</th><th class="num">sd ΔR</th><th class="num">mean |ΔR|</th><th class="num">loss L</th></tr></thead><tbody>${kinds.map(k => `<tr><td class="model">${MD_RULE_NAMES[k]}</td><td class="num ${col(k, r => r.var_pu)}">${mdN(Math.sqrt(R[k].var_pu), 2)}</td><td class="num">${mdN(R[k].mean_pu, 2)}</td><td class="num ${col(k, r => r.msd_pu)}">${mdN(Math.sqrt(R[k].msd_pu), 2)}</td><td class="num ${col(k, r => r.var_gy)}">${mdN(Math.sqrt(R[k].var_gy), 2)}</td><td class="num ${col(k, r => r.var_dR)}">${mdN(Math.sqrt(R[k].var_dR), 2)}</td><td class="num">${mdN(R[k].mean_absdR, 2)}</td><td class="num ${k === best ? "best" : ""}">${mdN(loss(k), 2)}</td></tr>`).join("")}</tbody></table>
+    <div class="note">Standard deviations in percentage points, pooled over the ${SM.loss.h} quarters and ${SM.loss.reps} draws; π̄ = ${mdN(tgt, 1)}. Bold: the lowest in the column. With λ = ${mdN(lam, 2)} and κ = ${mdN(kap, 2)} the lowest loss is ${MD_RULE_NAMES[best]}.</div>`;
+  plot("mdLossPlot", [
+    {type: "bar", x: kinds.map(k => MD_RULE_NAMES[k].replace(" (exogenous rate)", "")), y: kinds.map(k => R[k].var_pu), name: "V[Δ₄pu]", marker: {color: css("--s1")}, hovertemplate: "%{y:.2f}<extra>V[Δ₄pu]</extra>"},
+    {type: "bar", x: kinds.map(k => MD_RULE_NAMES[k].replace(" (exogenous rate)", "")), y: kinds.map(k => lam * R[k].var_gy), name: "λ·V[Δ₄y]", marker: {color: css("--s2")}, hovertemplate: "%{y:.2f}<extra>λ·V[Δ₄y]</extra>"},
+    {type: "bar", x: kinds.map(k => MD_RULE_NAMES[k].replace(" (exogenous rate)", "")), y: kinds.map(k => kap * R[k].var_dR), name: "κ·V[ΔR]", marker: {color: css("--s3")}, hovertemplate: "%{y:.2f}<extra>κ·V[ΔR]</extra>"}],
+    {barmode: "stack", margin: {l: 40, r: 10, t: 8, b: 60}, xaxis: axis({tickfont: {size: 10}}), yaxis: axis({rangemode: "tozero"}), legend: {orientation: "h", y: -0.3, x: 0, font: {size: 10}}});
+  $("#mdLossNote").innerHTML = `${esc(SM.loss.note)} Reading: the exogenous path has almost no rate variability by construction, so it wins whenever κ is large; the rules trade inflation variance for rate variance. In this estimated system the SM rule, which adds inertia without scaling down the responses (ABE2005 eq. 9), moves the rate more than FLX does. ABE2005 evaluated their rules by counterfactual simulation over 1995–2000 and also against house-price and equity-price rules, which this page does not have.`;
+}
+
+// ---- the equilibrium rate of unemployment implied by the wage curve and the price mark-up, for the current coefficients
+function mdUstar(P) {
+  const U = MD.simulation.ustar, lr = P.lr, r = modelSim.ustar(P, U.data, mdState.assume.z_growth), idx = U.data.index, x = idx.map(mdX), n = idx.length;
+  $("#mdUstarLede").innerHTML = `The wage curve (w − p − z = −γ<sub>u</sub>·u + μ<sub>w</sub>) and the price mark-up (p = (1 − ϕ)(w + τ1 − z) + ϕ·pi + η·τ3 + μ<sub>p</sub>) are two conditions on the same real wage. Solving them together gives the rate of unemployment at which both hold, for a given wedge between consumer and import prices and given tax rates. Bårdsen, Jansen and Nymoen (2003, §2.3) and the 2005 book (ch. 6) use it to show that in this model there is no natural rate fixed by the labour market alone: the equilibrium moves with the terms of trade and the real exchange rate. The line is recomputed from whatever coefficients are set on the <a href="#policy">Policy</a> tab.`;
+  plot("mdUstarPlot", [
+    {x, y: U.data.u, name: "actual unemployment rate", mode: "lines", line: {color: css("--text-2"), width: 1.6}, hovertemplate: "%{y:.2f}%<extra>actual</extra>"},
+    {x, y: r.ustar, name: "u* from the wage–price block", mode: "lines", line: {color: css("--s1"), width: 2.4}, hovertemplate: "%{y:.2f}%<extra>u*</extra>"}],
+    {margin: {l: 40, r: 10, t: 8, b: 48}, xaxis: axis({dtick: 5}), yaxis: axis({rangemode: "tozero"}), legend: {orientation: "h", y: -0.22, x: 0, font: {size: 10}}});
+  const mean = (arr, from, to) => { const v = arr.filter((_, i) => idx[i] >= from && idx[i] <= to); return v.reduce((a, b) => a + b, 0) / v.length; };
+  const last = r.ustar[n - 1], ua = U.data.u[n - 1], s22 = mean(r.ustar, "2022Q1", "2024Q4"), a22 = mean(U.data.u, "2022Q1", "2024Q4"), s10 = mean(r.ustar, "2010Q1", "2019Q4"), a10 = mean(U.data.u, "2010Q1", "2019Q4");
+  const pp = 100 * r.sens_wedge / 100 * last;
+  $("#mdUstarText").innerHTML = `<div class="eqform">u* = [μ<sub>p</sub> + η·τ3 + (1 − ϕ)(μ<sub>w</sub> + τ1) − ϕ·(p − pi)] / ((1 − ϕ)·γ<sub>u</sub>)</div>
+    <p>With γ<sub>u</sub> = ${mdN(lr.gamma_u, 2)} and ϕ = ${mdN(lr.phi, 2)}: a 1% rise in import prices relative to consumer prices raises u* by ${mdN(r.sens_wedge, 1)}% of its level, about ${mdN(pp / 100, 2)} pp at today's u*. The constants μ<sub>w</sub> = ${mdN(r.ecm_w_star, 2)} and μ<sub>p</sub> = ${mdN(r.ecm_p_star, 2)} are the steady-state values of the two EqCM terms implied by the estimated wage and price equations with inflation on target and productivity growing ${mdN(mdState.assume.z_growth, 2)}% a year; they equal the sample means of the terms to the second decimal.</p>
+    <p><b>${esc(idx[n - 1])}:</b> u* = ${mdN(last, 1)}% against an actual ${mdN(ua, 1)}%. <b>2010–2019:</b> u* averaged ${mdN(s10, 1)}%, the actual rate ${mdN(a10, 1)}%. <b>2022–2024:</b> u* ${mdN(s22, 1)}% against ${mdN(a22, 1)}%${s22 > a22 + 1 ? ": the terms-of-trade loss of 2022 lowered the real wage the mark-up allows, and with a wage curve this flat the block needs several points more unemployment to bring the wage share down. What happened instead was that real wages fell with unemployment at 2%, so the wage EqCM term stayed away from its equilibrium for three years (see the wage equation's fitted path higher up on this tab)" : "."}.</p>
+    <p class="note">${esc(U.note)} Everything in the line follows from four numbers (γ<sub>u</sub>, ϕ, η and the two constants) and three observed series, so it is as good as the imposed long-run coefficients: the free estimate of γ<sub>u</sub> on this sample has the wrong sign (see Long-run relations).</p>`;
+}
+
+// ---- breaks, invariance, encompassing (model/robustness.py)
+function mdRobust() {
+  const RB = MD.robustness; if (!RB) { $("#mdRbBlock").style.display = "none"; return; }
+  const est = c => `${mdSig(c.est)} (${mdN(c.t, 1)})`;
+  // 1 indicator saturation
+  const S = RB.saturation, keys = Object.keys(S).filter(k => k !== "note");
+  const ind = r => r.retained.length ? r.retained.map(x => `${esc(x.date)} <span class="r">${mdSig(x.coef)} (t ${mdN(x.t, 1)})</span>`).join("<br>") : "none";
+  const shift = r => { if (!r.coef_shift || !r.coef_shift.length) return "–"; const m = r.coef_shift.reduce((a, b) => Math.abs((b.after - b.before) / b.se) > Math.abs((a.after - a.before) / a.se) ? b : a); const z = (m.after - m.before) / m.se; return `${esc(m.name)}: ${mdSig(m.before)} → ${mdSig(m.after)} (${mdN(z, 1)} s.e.)`; };
+  $("#mdRbSat").innerHTML = `<table class="plain mdtbl rbtbl"><thead><tr><th>equation</th><th>hand-picked</th><th>impulses retained (IIS)</th><th class="num">σ̂ before → after</th><th>level shifts retained (SIS)</th><th>largest coefficient shift with the impulses</th></tr></thead><tbody>${keys.map(k => { const s = S[k]; return `<tr><td class="model">${esc(s.label)}</td><td class="dates">${s.hand_dummies.length ? s.hand_dummies.map(d => esc(d.replace("covidq", "2020Q"))).join(", ") : "none"}</td><td class="dates">${ind(s.iis)}</td><td class="num">${mdN(100 * s.iis.sigma_before, 2)}% → ${mdN(100 * s.iis.sigma_after, 2)}%</td><td class="dates">${ind(s.sis)}</td><td class="dates">${shift(s.iis)}</td></tr>`; }).join("")}</tbody></table>
+    <div class="note">${esc(S.note)} With ${S.wage.T} quarters and α = 0.01 about ${S.wage.iis.expected_spurious} impulses and ${S.wage.sis.expected_spurious} steps per equation are expected by chance. ${(() => { const both = keys.filter(k => S[k].hand_dummies.length && S[k].hand_dummies.some(d => S[k].iis.retained.some(r => r.date === d.replace("covidq", "2020Q")))); const steps = keys.filter(k => S[k].sis.retained.length); const many = keys.filter(k => S[k].iis.retained.length >= 4); return `Reading: ${both.length ? `the data find the hand-picked 2020 dummies in the ${both.map(k => S[k].label).join(" and ")} equation${both.length > 1 ? "s" : ""}` : "the data do not single out the hand-picked dummies"}; ${many.length ? `${many.map(k => S[k].label).join(" and ")} ${many.length > 1 ? "have" : "has"} several scattered outliers` : "no equation has more than a few outliers"}; level shifts are found ${steps.length ? `only in ${steps.map(k => S[k].label).join(" and ")}` : "nowhere"}.`; })()}</div>`;
+  // 2 super-exogeneity
+  const X = RB.superexo;
+  $("#mdRbSx").innerHTML = `<table class="plain mdtbl rbtbl"><thead><tr><th>conditional equation</th><th>marginal processes</th><th class="num">indicators</th><th class="num">F (df)</th><th class="num">p</th><th>reading</th></tr></thead><tbody>${X.tests.map(t => `<tr><td class="model">${esc(t.label)}</td><td>${esc(t.marginals)}: ${t.vars.map(esc).join(", ")}</td><td class="num">${t.n_ind}</td><td class="num">${t.F == null ? "–" : `${mdN(t.F, 2)} (${t.df.join(", ")})`}</td><td class="num">${t.p == null ? "–" : mdN(t.p, 3)}</td><td class="${t.p == null ? "" : t.p < 0.05 ? "bad" : "ok"}">${esc(t.verdict)}</td></tr>`).join("")}</tbody></table>
+    <details><summary class="note" style="cursor:pointer">Breaks found in the marginal models</summary><table class="plain mdtbl rbtbl"><thead><tr><th>variable</th><th>model</th><th>impulses</th><th>level shifts</th></tr></thead><tbody>${Object.values(X.marginals).map(m => `<tr><td>${esc(m.label)}</td><td>${esc(m.model)}, T = ${m.T}</td><td class="dates">${m.impulses.map(esc).join(", ") || "none"}</td><td class="dates">${m.steps.map(esc).join(", ") || "none"}</td></tr>`).join("")}</tbody></table></details>
+    <div class="note">${esc(X.note)} ${(() => { const rej = X.tests.filter(t => t.p != null && t.p < 0.05), ok = X.tests.filter(t => t.p != null && t.p >= 0.05); return `Reading: ${rej.length ? rej.map(t => `the ${t.label.toLowerCase()} equation is not invariant to the breaks in ${t.marginals.includes("policy") ? "the policy-rate and exchange-rate processes, the Lucas-critique direction" : "its own conditioning variables, so its pass-through coefficients moved when those series broke"} (p ${mdN(t.p, 3)})`).join("; ") : "no equation rejects"}; ${ok.length} of ${X.tests.length} tests do not reject.`; })()}</div>`;
+  // 3 NKPC
+  const N = RB.nkpc, rows = ["Δp_{t+1}", "Δp_{t−1}", "x_t", "Δpi_t", "Δpe_t", "Δp_{t−4}", "gap_{t−1}", "EqCM_{t−1}"];
+  const cell = (m, nm) => { const c = m.coef.find(x => x.name === nm); return c ? est(c) : ""; };
+  $("#mdRbNk").innerHTML = N.variants.map(v => `<div class="sub" style="margin:6px 0 4px;font-weight:600;color:var(--text)">Forcing variable x = ${esc(v.forcing)} <span class="note" style="display:inline;margin:0">T = ${N.T}; first-stage F: lead ${mdN(v.first_stage_F.lead, 1)}, x ${mdN(v.first_stage_F.x, 1)}</span></div>
+    <table class="plain mdtbl rbtbl"><thead><tr><th>regressor</th><th class="num">hybrid NKPC</th><th class="num">NKPC + the EqCM's variables</th><th class="num">EqCM + the lead</th></tr></thead><tbody>
+    ${rows.map(nm => `<tr><td>${mdForm(nm)}</td><td class="num">${cell(v.nkpc, nm)}</td><td class="num">${cell(v.nkpc_plus_eqcm, nm)}</td><td class="num">${cell(v.eqcm_plus_lead, nm)}</td></tr>`).join("")}
+    <tr><td>σ̂</td><td class="num">${mdN(100 * v.nkpc.sigma, 2)}%</td><td class="num">${mdN(100 * v.nkpc_plus_eqcm.sigma, 2)}%</td><td class="num">${mdN(100 * v.eqcm_plus_lead.sigma, 2)}%</td></tr>
+    <tr><td>Sargan χ²(df) [p]</td><td class="num">${mdN(v.nkpc.sargan.stat, 1)} (${v.nkpc.sargan.df}) [${mdN(v.nkpc.sargan.p, 2)}]</td><td class="num">${mdN(v.nkpc_plus_eqcm.sargan.stat, 1)} (${v.nkpc_plus_eqcm.sargan.df}) [${mdN(v.nkpc_plus_eqcm.sargan.p, 2)}]</td><td class="num">${mdN(v.eqcm_plus_lead.sargan.stat, 1)} (${v.eqcm_plus_lead.sargan.df}) [${mdN(v.eqcm_plus_lead.sargan.p, 2)}]</td></tr>
+    <tr><td>EqCM block, F(df) [p]</td><td></td><td class="num">${mdN(v.eqcm_terms_wald.F, 1)} (${v.eqcm_terms_wald.df.join(", ")}) [${mdN(v.eqcm_terms_wald.p, 3)}]</td><td></td></tr></tbody></table>`).join("") +
+    `<div class="note">${esc(N.note)} Instruments: ${esc(N.instruments)}. Coefficients with t-values in brackets. ${(() => { const a = N.variants[0].nkpc.coef, bf = a.find(c => c.name === "Δp_{t+1}"), bb = a.find(c => c.name === "Δp_{t−1}"), bx = a.find(c => c.name === "x_t"), bf2 = N.variants[0].nkpc_plus_eqcm.coef.find(c => c.name === "Δp_{t+1}"); return `Reading: on its own the hybrid NKPC gives a forward coefficient of ${mdN(bf.est, 2)} (t ${mdN(bf.t, 1)}), ${Math.abs(bb.t) < 2 ? "no weight on lagged inflation" : `${mdN(bb.est, 2)} on lagged inflation`} and ${Math.abs(bx.t) < 2 ? "no significant forcing variable" : "a significant forcing variable"}; once the EqCM's variables are added the forward term ${Math.abs(bf2.t) < 2 ? "loses its significance" : "keeps its significance"} (${mdN(bf2.est, 2)}, t ${mdN(bf2.t, 1)}) and the EqCM block is ${N.variants[0].eqcm_terms_wald.p < 0.01 ? "overwhelmingly significant" : "not significant"}, which ${Math.abs(bf2.t) < 2 && N.variants[0].eqcm_terms_wald.p < 0.01 ? "is" : "is not"} Bårdsen, Jansen and Nymoen's result for Norway.`; })()} ${N.variants.some(v => v.first_stage_F.lead < 10) ? `<b>Caveat:</b> the first-stage F for the lead is only ${mdN(N.variants[0].first_stage_F.lead, 1)}: beyond the seasonal pattern the lagged instruments barely predict next quarter's inflation, so the forward coefficient is weakly identified and its 2SLS estimate and t-value are unreliable (Stock and Yogo; Mavroeidis 2005 makes this point against the NKPC literature generally). The EqCM block's significance does not depend on that. ` : ""}The reverse test is less clear-cut here: the instrumented lead is significant when added to the EqCM with the wage-share instruments (t ${mdN(N.variants[0].eqcm_plus_lead.coef.find(c => c.name === "Δp_{t+1}").t, 1)}) and not with the gap instruments (t ${mdN(N.variants[1].eqcm_plus_lead.coef.find(c => c.name === "Δp_{t+1}").t, 1)}).</div>`;
+  // 4 recursive cointegration
+  const RC = RB.recursive_coint;
+  for (const k of ["wage", "price"]) {
+    const r = RC[k].rows, x = r.map(z => mdX(z.end));
+    plot("mdRbRc_" + k, [{x, y: r.map(z => z.trace0 / z.cv0), name: "r = 0", mode: "lines", line: {color: css("--s1"), width: 2.2}, hovertemplate: "%{y:.2f}<extra>r = 0, trace/cv</extra>"},
+      {x, y: r.map(z => z.trace1 / z.cv1), name: "r ≤ 1", mode: "lines", line: {color: css("--s2"), width: 1.8}, hovertemplate: "%{y:.2f}<extra>r ≤ 1, trace/cv</extra>"}],
+      {margin: {l: 40, r: 10, t: 8, b: 44}, xaxis: axis({dtick: 5}), yaxis: axis({rangemode: "tozero"}), legend: {orientation: "h", y: -0.25, x: 0, font: {size: 10}}, shapes: [{type: "line", x0: x[0], x1: x[x.length - 1], y0: 1, y1: 1, line: {color: css("--s8"), width: 1, dash: "dash"}}]});
+    $("#mdRbRcLab_" + k).textContent = RC[k].coef_label + ", first vector normalised on " + RC[k].vars[0];
+    plot("mdRbRcC_" + k, [{x, y: r.map(z => z.coef), name: "recursive estimate", mode: "lines", line: {color: css("--s1"), width: 2.2}, hovertemplate: "%{y:.3f}<extra>recursive</extra>"}],
+      {margin: {l: 48, r: 10, t: 8, b: 44}, xaxis: axis({dtick: 5}), yaxis: axis({}), showlegend: false, shapes: [{type: "line", x0: x[0], x1: x[x.length - 1], y0: k === "wage" ? -0.1 : 0.4, y1: k === "wage" ? -0.1 : 0.4, line: {color: css("--s4"), width: 1, dash: "dash"}}]});
+  }
+  $("#mdRbRcNote").innerHTML = `${esc(RC.note)} Dashed: the imposed value (−0.1 on u; 0.4 on import prices). Reading: in the wage system the trace statistic for r = 0 ${RC.wage.rows[RC.wage.rows.length - 1].trace0 / RC.wage.rows[RC.wage.rows.length - 1].cv0 > 1 ? "rejects no cointegration at the end of the sample" : "does not reject no cointegration at the end of the sample"} and the recursive coefficient on unemployment ${Math.abs(RC.wage.rows[RC.wage.rows.length - 1].coef) > 1 ? "is far from the imposed −0.1 and unstable" : "stays near the imposed value"}; in the price system the rank evidence is ${RC.price.rows[RC.price.rows.length - 1].trace0 / RC.price.rows[RC.price.rows.length - 1].cv0 > 1 ? "firm" : "weak"} and the recursive import-price weight ${Math.abs(RC.price.rows[RC.price.rows.length - 1].coef - 0.4) < 0.2 ? "is close to the imposed 0.4" : "differs from the imposed 0.4"}.`;
+  // 5 2SLS
+  const IV = RB.iv;
+  $("#mdRbIv").innerHTML = `<table class="plain mdtbl rbtbl"><thead><tr><th>equation</th><th>endogenous regressor</th><th class="num">OLS (s.e.)</th><th class="num">2SLS (s.e.)</th><th class="num">first-stage F</th><th class="num">DWH t [p]</th><th class="num">σ̂ OLS / 2SLS</th><th>instruments</th></tr></thead><tbody>${["price", "imp", "unemp"].map(k => { const r = IV[k], row = r.rows.find(x => x.name === r.endogenous); return `<tr><td class="model">${esc(r.label)}</td><td>${mdForm({Dpi: "Δpi_t", Dv: "Δv_t", Dy: "Δy_t"}[r.endogenous])}</td><td class="num">${mdSig(row.ols)} (${mdSig(row.ols_se)})</td><td class="num">${mdSig(row.tsls)} (${mdSig(row.tsls_se)})</td><td class="num">${mdN(r.first_stage_F, 1)}</td><td class="num ${Math.abs(r.dwh_t) > 2 ? "bad" : "ok"}">${mdN(r.dwh_t, 2)} [${mdN(r.dwh_p, 2)}]</td><td class="num">${mdN(100 * r.sigma_ols, 2)}% / ${mdN(100 * r.sigma_tsls, 2)}%</td><td class="dates">${r.instruments.map(i => mdForm(i.replace("_l", "_{t−").replace(/(\{t−\d)$/, "$1}"))).join(", ")}</td></tr>`; }).join("")}</tbody></table>
+    <div class="note">${esc(IV.note)} Reading: none of the three Durbin–Wu–Hausman tests rejects, so OLS is not contradicted by the instruments; the import-price instruments for Δpi in the price equation are weak (F ${mdN(IV.price.first_stage_F, 1)}), so that comparison carries little weight either way.</div>`;
+}
+
+// ---- forecasting record: rolling re-estimation and eight-quarter forecasts from every origin (model/forecast_eval.py)
+function mdForecastEval() {
+  const FE = MD.forecast_eval; if (!FE) { $("#mdFeBlock").style.display = "none"; return; }
+  const cols = {eqcm: css("--s1"), dvar: css("--s2"), ic: css("--s3"), naive: css("--muted"), ar: css("--s4")}, H = FE.h, hs = [1, 2, 4, 8].filter(h => h <= H);
+  $("#mdFeSub").textContent = `${FE.n_origins} origins, ${FE.first_origin}–${FE.last_origin}, ${H} quarters ahead`;
+  $("#mdFeLede").innerHTML = `Eitrheim, Husebø and Nymoen (1999) asked whether an equilibrium-correction model forecasts better than the same model in differences, and found that the dVAR is the more robust after a shift in the equilibrium means; Eitrheim, Jansen and Nymoen (2002) traced forecast failure to such shifts. The same test here: from every quarter since ${FE.first_origin} the equations are re-estimated on the data to that quarter and the system is simulated ${H} quarters ahead, with the exogenous variables and the policy rate at their actual values. Five forecasters are compared: ${Object.values(FE.models).map(m => m.label).join(", ")}.`;
+  const draw = () => {
+    const m = (document.querySelector("input[name=mdFeModel]:checked") || {}).value || "eqcm", xc = $("#mdFeXc").checked, R = xc ? FE.rmsfe_xcovid : FE.rmsfe, N = xc ? FE.n_xcovid : FE.n;
+    for (const v of ["infl4", "u", "g4y"]) {
+      const A = FE.actual[v], P = FE.paths[v], tr = [{x: A.index.map(mdX), y: A.values, name: "actual", mode: "lines", line: {color: css("--text-2"), width: 2}, hovertemplate: "%{y:.2f}<extra>actual</extra>"}];
+      P.origins.forEach((oq, i) => { const path = P[m][i], o = mdX(oq); tr.push({x: path.map((_, j) => o + (j + 1) / 4), y: path, mode: "lines", line: {color: cols[m], width: 1}, opacity: 0.55, showlegend: false, hovertemplate: `%{y:.2f}<extra>from ${oq}</extra>`}); });
+      plot("mdFeH_" + v, tr, {margin: {l: 40, r: 10, t: 8, b: 30}, xaxis: axis({dtick: 2, range: [mdX(FE.first_origin) - 1, mdX(FE.last_origin) + 2.5]}), yaxis: axis({}), showlegend: false});
+      plot("mdFeR_" + v, Object.keys(FE.models).map(k => ({x: Array.from({length: H}, (_, i) => i + 1), y: R[v][k], name: FE.models[k].label, mode: "lines+markers", line: {color: cols[k], width: k === "eqcm" ? 2.6 : 1.6}, marker: {size: 5}, hovertemplate: "%{y:.2f}<extra>" + FE.models[k].label + "</extra>"})),
+        {margin: {l: 40, r: 10, t: 8, b: 52}, xaxis: axis({dtick: 1, title: {text: "quarters ahead", font: {size: 10}}}), yaxis: axis({rangemode: "tozero"}), legend: {orientation: "h", y: -0.32, x: 0, font: {size: 9}}});
+    }
+    let html = `<table class="plain mdtbl"><thead><tr><th>variable</th><th>forecaster</th>${hs.map(h => `<th class="num">h = ${h}</th>`).join("")}<th class="num">bias, h = 4</th></tr></thead><tbody>`;
+    for (const v in FE.vars) for (const k in FE.models) {
+      const bestAt = h => Object.keys(FE.models).reduce((a, b) => (R[v][a][h - 1] ?? 9e9) <= (R[v][b][h - 1] ?? 9e9) ? a : b);
+      html += `<tr>${k === "eqcm" ? `<td rowspan="${Object.keys(FE.models).length}">${esc(FE.vars[v])}</td>` : ""}<td class="${k === "eqcm" ? "model" : ""}">${esc(FE.models[k].label)}</td>` + hs.map(h => { const x = R[v][k][h - 1], e = R[v].eqcm[h - 1], d = k !== "eqcm" && FE.dm[v][k] ? FE.dm[v][k][h - 1] : null, star = d && d.p != null ? (d.p < 0.01 ? "**" : d.p < 0.05 ? "*" : "") : ""; return `<td class="num ${bestAt(h) === k ? "best" : ""}">${mdN(x, 2)}${star}${k !== "eqcm" && x != null ? ` <span class="r">(${mdN(x / e, 2)})</span>` : ""}</td>`; }).join("") + `<td class="num">${mdN(FE.bias[v][k][3], 2)}</td></tr>`;
+    }
+    $("#mdFeTable").innerHTML = html + `</tbody></table><div class="note">${xc ? `Targets in 2020Q1–2021Q4 left out: ${N.infl4[0]} forecasts at h = 1, ${N.infl4[H - 1]} at h = ${H}.` : `All targets: ${N.infl4[0]} forecasts at h = 1, ${N.infl4[H - 1]} at h = ${H}.`} Bias is the mean of actual minus forecast (the bias column always uses all targets). The Diebold–Mariano test compares each forecaster's squared errors with the model's; the stars say the difference is significant, in whichever direction the RMSFE shows. The exchange-rate equation has no level term, so the model and the dVAR coincide for it.</div>`;
+  };
+  draw();
+  document.querySelectorAll("input[name=mdFeModel]").forEach(r => r.addEventListener("change", draw)); $("#mdFeXc").addEventListener("change", draw);
+  // four-quarter-ahead errors of the model over time, by target quarter
+  const org = FE.paths.infl4.origins, tq = org.map(q => mdX(q) + 1), lab = {infl4: "CPI inflation", u: "unemployment rate", g4y: "GDP growth"}, cl = {infl4: css("--s1"), u: css("--s2"), g4y: css("--s3")};
+  plot("mdFeE", ["infl4", "u", "g4y"].map(v => ({x: tq, y: FE.errors[v].eqcm["4"], name: lab[v], mode: "lines", line: {color: cl[v], width: v === "infl4" ? 2.4 : 1.6}, connectgaps: false, hovertemplate: "%{y:.2f} pp<extra>" + lab[v] + "</extra>"})),
+    {margin: {l: 40, r: 10, t: 8, b: 48}, xaxis: axis({dtick: 2}), yaxis: axis({zeroline: true, zerolinecolor: css("--line"), title: {text: "pp", font: {size: 10}}}), legend: {orientation: "h", y: -0.22, x: 0, font: {size: 10}},
+     shapes: [{type: "rect", x0: 2020, x1: 2022, y0: 0, y1: 1, yref: "paper", fillcolor: css("--muted"), opacity: 0.12, line: {width: 0}}]});
+  $("#mdFeNote").innerHTML = `${esc(FE.note)} Shaded: Covid target quarters. The intercept correction as applied here (the full last residual carried through the horizon) is the mechanical version; Clements and Hendry recommend it after a detected break, not at every origin, and the table shows why. What is missing: real-time data vintages and Norges Bank's own historical projections, which would make this a forecasting contest rather than a test of the equations' dynamics.`;
+}
+function mdAnnual(f) {
+  const SM = MD.simulation, H = SM.history, E = MD.estimates;
+  const years = ["2026", "2027", "2028", "2029"], rows = [["infl4", "cpi_inflation", "cpi_inflation", "CPI inflation, %"], ["infl4u", "cpi_ate_inflation", "cpi_ate_inflation", "CPI-ATE inflation, %"],
+    ["u", "unemployment_registered", "unemployment_lfs", E.config.u === "reg" ? "Unemployment, registered, %" : "Unemployment, LFS, %"], ["g4y", "mainland_gdp_growth", "mainland_gdp_growth", "Mainland GDP growth, %"], ["R", "policy_rate", "policy_rate", "Policy rate, %"]];
+  const ann = (idx, vals) => { const y = {}; idx.forEach((q, i) => (y[q.slice(0, 4)] = y[q.slice(0, 4)] || []).push(vals[i])); return y; };
+  const nbA = SM.norges_bank.annual, nam = (SM.nam.publications || [])[0];
+  const val = (arr, y) => { const x = (arr || []).find(e => e.period === y); return x ? mdN(x.value, 1) : "–"; };
+  let html = `<table class="plain mdtbl"><thead><tr><th></th>${years.map(y => `<th class="num" colspan="3" style="text-align:center">${y}</th>`).join("")}</tr><tr><th></th>${years.map(() => `<th class="num">model</th><th class="num">NB</th><th class="num">LO/NAM</th>`).join("")}</tr></thead><tbody>`;
+  for (const [k, nbk, namk, label] of rows) {
+    const m = ann(H.index.concat(f.index), H[k].concat(f.out[k]));
+    html += `<tr><td>${label}</td>` + years.map(y => { const v = m[y] || []; const mv = v.length === 4 ? mdN(v.reduce((a, b) => a + b, 0) / 4, 1) : "–"; return `<td class="num model">${mv}</td><td class="num">${val(nbA[nbk], y)}</td><td class="num${k === "u" && E.config.u === "reg" ? " na" : ""}">${nam ? val(nam.variables[namk], y) : "–"}</td>`; }).join("") + "</tr>";
+  }
+  $("#mdAnnual").innerHTML = html + "</tbody></table>";
+  $("#mdAnnualNote").innerHTML = `Model: averages of four quarters (2026 = two actual quarters plus the first two forecast quarters). NB: ${esc(SM.norges_bank.report)}, Table 3. LO/NAM: ${nam ? esc(nam.source) : "–"}${E.config.u === "reg" ? "; its unemployment is the LFS rate, not comparable with the registered rate" : ""}. NB's trading-partner and oil assumptions differ from this page's.`;
+}
+function mdShock(P, inp, A) {
+  const SM = MD.simulation, cols = {exo: css("--s1"), flx: css("--s2"), sm: css("--s3")}, names = {exo: "exogenous rate +100 bp", flx: "FLX rule, intercept +100 bp", sm: "SM rule, intercept +100 bp"};
+  const res = {}; for (const kind of ["exo", "flx", "sm"]) res[kind] = modelSim.multipliers(inp, P, A, 48, kind, 100);
+  const x = Array.from({length: 48}, (_, i) => i + 1);
+  for (const key of ["infl4", "infl4u", "u_pp", "g4y", "v_level", "g4rw"]) {
+    const tr = [];
+    if (mdMB && mdMB[key]) {
+      const b = mdMB[key], rgb = isDark() ? "57,135,229" : "42,120,214";
+      tr.push({x, y: b.lo, mode: "lines", line: {width: 0}, showlegend: false, hoverinfo: "skip"});
+      tr.push({x, y: b.hi, mode: "lines", line: {width: 0}, fill: "tonexty", fillcolor: `rgba(${rgb},.10)`, name: "5–95% coefficient draws", hoverinfo: "skip"});
+      tr.push({x, y: b.lo25, mode: "lines", line: {width: 0}, showlegend: false, hoverinfo: "skip"});
+      tr.push({x, y: b.hi75, mode: "lines", line: {width: 0}, fill: "tonexty", fillcolor: `rgba(${rgb},.18)`, name: "25–75%", hoverinfo: "skip"});
+    }
+    plot("mdSh_" + key, tr.concat(["exo", "flx", "sm"].map(kind => ({x, y: res[kind].out[key], name: names[kind], mode: "lines", line: {color: cols[kind], width: kind === "exo" ? 2.6 : 1.6}, hovertemplate: "%{y:.3f} after %{x} quarters<extra>" + names[kind] + "</extra>"}))),
+      {margin: {l: 40, r: 10, t: 8, b: 52}, xaxis: axis({dtick: 8, title: {text: "quarters", font: {size: 10}}}), yaxis: axis({zeroline: true, zerolinecolor: css("--line")}), legend: {orientation: "h", y: -0.32, x: 0, font: {size: 10}}});
+  }
+  const e = res.exo.out, at = (arr, q) => mdN(arr[q - 1], 2);
+  $("#mdShockLede").innerHTML = `A permanent 100 basis point rise in the policy rate from ${esc(SM.shock.index[0])} (under the rules: a permanent +1 point in the rule's intercept), with the current parameters. Exogenous rate: the krone appreciates ${mdN(-e.v_level[0], 1)}% on impact and ${mdN(-e.v_level[47], 1)}% after 12 years; annual CPI inflation is ${at(e.infl4, 8)} pp lower after two years, ${at(e.infl4, 16)} after four and ${at(e.infl4, 48)} after twelve; unemployment changes by ${at(e.u_pp, 8)} pp after two years; four-quarter GDP growth by ${at(e.g4y, 8)} pp.`;
+  const SB = SM.shock.bands;
+  $("#mdShockNote").innerHTML = `Shaded: ${mdMB ? (mdMBKey === mdMBKey0 ? "" : "recomputed for the current coefficients: ") + esc(SB.note) : "coefficient-uncertainty bands are being recomputed for the current setting…"} Comparators: BJN2003 §6.1 report that a permanent +1 point in the money-market rate lowers annual inflation by about 0.4 point in the long run (Figure 8); BN2008 Figure 5 shows an impact appreciation of about 3% and an inflation multiplier approaching −1 point after four years. In this estimated system the transmission runs through the exchange rate, import prices and the output gap; the unemployment and real-wage channels are weak on the 1996–2026 sample (see the unemployment and output equations), and the credit channel of BN2008 is absent. The system is linear in logs, so the multipliers do not depend on the baseline.`;
+}
+function mdTracking() {
+  const T = MD.simulation.tracking, x = T.index.map(mdX);
+  $("#mdTrackSub").textContent = `dynamic simulation from ${T.start}`; $("#mdTrackLede").textContent = T.note;
+  for (const key of ["infl4", "u", "g4y"]) plot("mdTr_" + key, [
+    {x, y: T.actual[key], name: "actual", mode: "lines", line: {color: css("--text-2"), width: 1.6}},
+    {x, y: T.sim[key], name: "simulated", mode: "lines", line: {color: css("--s1"), width: 2.2}}],
+    {margin: {l: 40, r: 10, t: 8, b: 48}, xaxis: axis({dtick: 5}), yaxis: axis({}), legend: {orientation: "h", y: -0.28, x: 0, font: {size: 10}}});
+}
+
+// ---- equations
+function mdEquations() {
+  const E = MD.estimates, order = ["wage", "price", "imp", "fx", "fx_level", "unemp", "output", "mm", "bridge", "rule_est"];
+  $("#mdEqSub").textContent = `${E.sample[0]}–${E.sample[1]}`;
+  $("#mdEqLede").innerHTML = `<b>Click an equation</b> to open its estimated form, the coefficients beside the published values, the misspecification tests and three figures: actual and fitted, recursive residuals and Chow stability tests. ${esc(E.estimator_note)}`;
+  const testChip = t => `<span class="${t.p < 0.01 ? "bad" : t.p < 0.05 ? "warn" : ""}" title="${esc(t.label)}">${esc(t.label.split(" ")[0] + (t.label.includes("ARCH") ? " 1–4" : t.label.includes("AR") ? " 1–5" : ""))} ${mdN(t.stat, 2)} [${mdN(t.p, 3)}]</span>`;
+  $("#mdEqs").innerHTML = order.filter(k => E.equations[k]).map(k => {
+    const eq = E.equations[k], t = eq.tests;
+    const rows = eq.coef.filter(c => c.kind !== "seasonal").map(c => `<tr><td>${mdForm(c.label)}${c.kind === "dummy" ? ' <span class="note" style="display:inline">(impulse dummy)</span>' : ""}</td><td class="num">${mdSig(c.est, 4)}</td><td class="num">${mdSig(c.se, 4)}</td><td class="num">${mdN(c.t, 1)}</td><td class="pubv">${c.published ? esc(c.published[0]) + '<br><span style="font-size:.72rem">' + esc(c.published[1]) + "</span>" : ""}</td></tr>`).join("");
+    const seas = eq.coef.filter(c => c.kind === "seasonal");
+    const alts = Object.values(E.alternatives).filter(a => a.key === k);
+    const altRows = alts.map(a => { const ecm = a.coef.find(c => c.name.startsWith("ecm") || c.name === "u_l2" || c.name === "RS_l1"); return `<tr><td>${esc(a.alt_label)}</td><td>${esc(a.sample[0])}–${esc(a.sample[1])}</td><td class="num">${a.T}</td><td class="num">${mdSig(a.sigma, 4)}</td><td class="num">${ecm ? mdSig(ecm.est, 3) + " (" + mdN(ecm.t, 1) + ")" : "–"}</td><td class="num">${a.tests.ar15 ? mdN(a.tests.ar15.p, 2) : "–"}</td><td class="num">${mdN(a.tests.norm.p, 2)}</td></tr>`; }).join("");
+    const tried = Object.entries(eq.dummies_tried || {}).map(([d, tv]) => `${d} (t ${mdN(tv, 1)})`).join(", ");
+    return `<details class="eqcard" data-eq="${k}"><summary>${esc(eq.label)} <small>${esc(eq.lhs_label)}</small><small>${esc(eq.sample[0])}–${esc(eq.sample[1])}, T = ${eq.T}, σ̂ = ${["mm", "rule_est"].includes(k) ? mdN(eq.sigma, 3) + " pp" : (100 * eq.sigma).toFixed(2) + "%"}, R² = ${mdN(eq.r2, 2)}, DW = ${mdN(eq.dw, 2)}</small><span class="open"></span></summary>
+      <div class="eqform">${mdForm(eq.form)}</div>
+      <div class="pubform"><b>Published form:</b> ${esc(eq.published_form)}</div>
+      <table class="plain"><thead><tr><th>regressor</th><th class="num">coefficient</th><th class="num">s.e.</th><th class="num">t</th><th>published value (source)</th></tr></thead><tbody>${rows}</tbody></table>
+      ${seas.length ? `<div class="note">Seasonal dummies: ${seas.map(c => `${esc(c.label)} ${mdSig(c.est, 3)} (t ${mdN(c.t, 1)})`).join("; ")}.</div>` : ""}
+      ${tried ? `<div class="note">Impulse dummies tried, kept where |t| ≥ 2: ${esc(tried)}.</div>` : ""}
+      <div class="diag">${Object.values(t).map(testChip).join("")}${eq.chow_split ? `<span class="${eq.chow_split.p < 0.01 ? "bad" : eq.chow_split.p < 0.05 ? "warn" : ""}" title="split-sample Chow test at ${eq.chow_split.date}">Chow ${eq.chow_split.date} F(${eq.chow_split.df.join(",")}) ${mdN(eq.chow_split.F, 2)} [${mdN(eq.chow_split.p, 3)}]</span>` : ""}</div>
+      <div class="eqplot plot" id="mdEqPlot_${k}"></div>
+      <div class="note">Left: actual and fitted. Middle: one-step recursive residuals with ±2 s.e. Right: break-point Chow tests (N↓, every quarter as a break) and one-step Chow tests as ratios to their 5% critical values; above 1 = rejection. Tests: Breusch–Godfrey AR 1–5 F, ARCH 1–4 F, Jarque–Bera normality, heteroskedasticity F on regressors and squares, RESET F; p-values in brackets, red below 1%, amber below 5%.</div>
+      ${altRows ? `<table class="plain" style="margin-top:10px"><thead><tr><th>alternative</th><th>sample</th><th class="num">T</th><th class="num">σ̂</th><th class="num">adjustment coef. (t)</th><th class="num">AR p</th><th class="num">normality p</th></tr></thead><tbody>${altRows}</tbody></table>` : ""}
+    </details>`;
+  }).join("");
+  document.querySelectorAll("#mdEqs details").forEach(d => d.addEventListener("toggle", () => { if (d.open && !d.dataset.drawn) { mdEqPlot(d.dataset.eq); d.dataset.drawn = "1"; } }));
+  $("#mdEqOpenAll").onclick = () => document.querySelectorAll("#mdEqs details").forEach(d => d.open = true);
+  $("#mdEqCloseAll").onclick = () => document.querySelectorAll("#mdEqs details").forEach(d => d.open = false);
+  const firstEq = document.querySelector("#mdEqs details"); if (firstEq) firstEq.open = true;   // the first card is open so the reader sees what a card holds
+  const rc = E.residual_correlation;
+  const shade = (v, i, j) => { if (i === j) return 'style="color:var(--muted)"'; const a = Math.min(0.85, Math.abs(v)); return `style="background:rgba(${v < 0 ? "214,69,53" : "66,133,244"},${a.toFixed(2)});${a > 0.45 ? "color:#fff;" : ""}${Math.abs(v) >= 0.3 ? "font-weight:600" : ""}"`; };
+  $("#mdResCorr").innerHTML = `<table class="plain"><thead><tr><th></th>${rc.keys.map(k => `<th class="num">${k}</th>`).join("")}</tr></thead><tbody>${rc.keys.map((k, i) => `<tr><td>${k}</td>${rc.matrix[i].map((v, j) => `<td class="num c" ${shade(v, i, j)}>${mdN(v, 2)}</td>`).join("")}</tr>`).join("")}</tbody></table>
+    <div class="scale">−1 <i></i> +1 <span>· shading by the correlation, red negative, blue positive</span></div>
+    <div class="note">Correlations of the OLS residuals over the common sample. The wage–output correlation (${mdN(rc.matrix[rc.keys.indexOf("wage")][rc.keys.indexOf("output")], 2)}) reflects the hours series shared by hourly wages and productivity.</div>`;
+}
+function mdEqPlot(k) {
+  const eq = MD.estimates.equations[k], r = eq.recursive, x = eq.dates.map(mdX), rx = r.dates.map(mdX);
+  const tr = [
+    {x, y: eq.actual, name: "actual", mode: "lines", line: {color: css("--text-2"), width: 1.4}, xaxis: "x", yaxis: "y"},
+    {x, y: eq.fitted, name: "fitted", mode: "lines", line: {color: css("--s1"), width: 1.6}, xaxis: "x", yaxis: "y"},
+    {x: rx, y: r.band, mode: "lines", line: {color: css("--s2"), width: 1, dash: "dot"}, name: "±2 s.e.", xaxis: "x2", yaxis: "y2", showlegend: false},
+    {x: rx, y: r.band.map(v => -v), mode: "lines", line: {color: css("--s2"), width: 1, dash: "dot"}, name: "±2 s.e.", xaxis: "x2", yaxis: "y2", showlegend: false},
+    {x: rx, y: r.resid, mode: "lines", line: {color: css("--text"), width: 1.2}, name: "one-step residual", xaxis: "x2", yaxis: "y2"},
+    {x: rx, y: r.chowN.map((v, i) => v / r.chowN_cv[i]), mode: "lines", line: {color: css("--s7"), width: 1.6}, name: "N↓ Chow / 5% cv", xaxis: "x3", yaxis: "y3"},
+    {x: rx, y: r.chow1.map((v, i) => v / r.chow1_cv[i]), mode: "lines", line: {color: css("--s4"), width: 1}, name: "1-step Chow / 5% cv", xaxis: "x3", yaxis: "y3"},
+  ];
+  plot("mdEqPlot_" + k, tr, {grid: {rows: 1, columns: 3, pattern: "independent"}, margin: {l: 40, r: 10, t: 24, b: 28}, legend: {orientation: "h", y: 1.2, x: 0, font: {size: 10}},
+    xaxis: axis({dtick: 10}), yaxis: axis({}), xaxis2: axis({dtick: 10}), yaxis2: axis({zeroline: true, zerolinecolor: css("--line")}), xaxis3: axis({dtick: 10}), yaxis3: axis({rangemode: "tozero"}),
+    shapes: [{type: "line", xref: "x3", yref: "y3", x0: rx[0], x1: rx[rx.length - 1], y0: 1, y1: 1, line: {color: css("--s8"), width: 1, dash: "dash"}}]});
+}
+function mdLongrun() {
+  const L = MD.estimates.longrun, j = L.wage, p = L.price;
+  const trace = J => J.trace.map((v, i) => `r ≤ ${i}: ${mdN(v, 1)} (cv ${mdN(J.trace_cv5[i], 1)})`).join("; ");
+  $("#mdLongrun").innerHTML = `<div class="card"><table class="plain lrtbl"><thead><tr><th>relation</th><th>imposed</th><th>source</th><th>free estimate on ${esc(j.sample[0])}–${esc(j.sample[1])}</th><th>reading</th></tr></thead><tbody>
+    <tr><td>Wage curve: w − p − z = −γ<sub>u</sub>·u</td><td>γ<sub>u</sub> = 0.1</td><td>${esc(j.imposed.source)}</td><td>Unrestricted EqCM: γ<sub>u</sub> = ${mdN(j.unrestricted_eqcm.gamma_u, 3)} (t on u ${mdN(j.unrestricted_eqcm.gamma_u_t, 1)}), α = ${mdN(j.unrestricted_eqcm.alpha, 3)} (t ${mdN(j.unrestricted_eqcm.alpha_t, 1)}). Johansen on (w − p, z, u): trace ${trace(j)}; first vector normalised (1, ${j.beta_first.slice(1).map(v => mdN(v, 2)).join(", ")}).</td><td>${j.unrestricted_eqcm.gamma_u < 0 ? "The free coefficient has the wrong sign: on 1996–2026 the labour share fell while unemployment was low (2022–24), so the sample cannot identify the wage curve. The published value is kept." : "Free estimate of the same sign; the published value is kept."}</td></tr>
+    <tr><td>Price mark-up: p = (1 − ϕ)(w + τ1 − z) + ϕ·pi + τ3</td><td>ϕ = 0.4, η = 1</td><td>${esc(p.imposed.source)}</td><td>Unrestricted EqCM: weights ${mdN(p.unrestricted_eqcm.phi_ulc, 2)} on unit labour costs and ${mdN(p.unrestricted_eqcm.phi_pi, 2)} on import prices (sum ${mdN(p.unrestricted_eqcm.homogeneity_sum, 2)}), α = ${mdN(p.unrestricted_eqcm.alpha, 3)} (t ${mdN(p.unrestricted_eqcm.alpha_t, 1)}). Johansen on (p − τ3, w + τ1 − z, pi): trace ${trace(p)}.</td><td>Homogeneity holds freely (${mdN(p.unrestricted_eqcm.homogeneity_sum, 2)}); the free split puts more weight on import prices than the imposed 0.6/0.4, between BJN's 0.38 and NAM2026's 0.38 on the one hand and the unrestricted ${mdN(p.unrestricted_eqcm.phi_pi, 2)} on the other.</td></tr>
+    <tr><td>Import prices: pi = v + pf − κ·rex</td><td>homogeneity in v and pf</td><td>${esc(L.imp.imposed.source)}</td><td>α = ${mdN(L.imp.alpha, 3)}; κ = ${mdN(L.imp.kappa, 2)} (t on rex ${mdN(L.imp.kappa_t, 1)})</td><td>Pricing-to-market is not identified on this sample (BN2008: κ = 0.55); adjustment is slow (BN2008: 0.43 per quarter).</td></tr>
+    <tr><td>Exchange rate: (v + p* − p) = 0.12[(R − π) − (R* − π*)]</td><td>0.12</td><td>BN2008 eq 47</td><td>α<sub>v</sub> = ${mdN(L.fx.alpha_v, 4)} (t ${mdN(L.fx.alpha_v_t, 1)})</td><td>${esc(L.fx.note)}</td></tr>
+    <tr><td>Unemployment: u = θ₁Δ(w − p) + θ₂[(RS − π) − 100Δ₄y]</td><td>none (free)</td><td>${esc(L.unemp.published.source)}: θ₁ = ${L.unemp.published.theta_wage}, θ₂ = ${L.unemp.published.theta_rr}</td><td>α = ${mdN(L.unemp.alpha, 3)}; θ₁ = ${mdN(L.unemp.theta_wage, 2)}; θ on the real rate ${mdN(L.unemp.theta_rr, 3)}, on GDP growth ${mdN(L.unemp.theta_g4y, 3)}</td><td>Real-wage growth raises unemployment as in BN2008, at less than half their coefficient; the real-rate and growth terms are insignificant here.</td></tr>
+    <tr><td>Output: y = 0.9g + 0.16rex − 0.06(RS − π)</td><td>0.9, 0.16, 0.06</td><td>${esc(L.output.imposed.source)}</td><td>α = ${mdN(L.output.alpha, 3)} (t ${mdN(L.output.alpha_t, 1)}); g ${mdN(L.output.g, 2)}, rex ${mdN(L.output.rex, 2)}, real rate ${mdN(L.output.rr, 3)}</td><td>Free: output moves one-for-one with public consumption, the real exchange rate has the wrong sign (the krone weakened through 2014–24 while mainland growth was weak) and the real-rate effect is small. The BN2008 values are kept; with them the adjustment coefficient is only ${mdN(MD.estimates.equations.output.coef.find(c => c.name === "ecm_y_l1").est, 3)}.</td></tr>
+    <tr><td>Money market: RS = a·R + b·R*</td><td>none (free)</td><td>${esc(L.mm.published.source)}: ${L.mm.published.RS_on_R} on R, ${L.mm.published.RS_on_Rs} on R*</td><td>${mdN(L.mm.RS_on_R, 2)} on R, ${mdN(L.mm.RS_on_Rs, 2)} on R*, constant ${mdN(L.mm.const, 2)}</td><td>Close to NAM2026.</td></tr>
+  </tbody></table><div class="note">${esc(j.note)}</div></div>`;
+}
+function mdDepartures() {
+  $("#mdDeps").innerHTML = MD.departures.map(d => `<li><b>${esc(d.title)}</b>${esc(d.text)}</li>`).join("");
+  $("#mdAdds").innerHTML = (MD.additions || []).map(d => `<li><b>${esc(d.title)}</b>${esc(d.text)}</li>`).join("");
+  $("#mdSources").innerHTML = MD.sources.map(s => `<li><b>${esc(s.tag)}</b> — ${esc(s.text)}${s.url ? ` <a href="${esc(s.url)}" target="_blank" rel="noopener">link</a>` : ""}</li>`).join("");
+  const ds = MD.data_status || {};
+  $("#mdFiles").innerHTML = `The data sources are checked automatically by a scheduled agent (${esc(ds.schedule || "twice a week")}). When new observations or revisions arrive, every series is refetched, the equations are re-estimated, the simulations and forecast evaluation are re-run and this page is republished. Last check: ${esc(fmtDate(ds.checked))}${ds.outcome === "unchanged" ? " (no new data)" : ""}. Most recent data update: ${ds.last_update ? esc(fmtDate(ds.last_update.date)) + ", " + esc(ds.last_update.summary) : "none recorded yet"}. The simulator on this page is a twin of the estimation code, checked against it at every build.`;
+}
+
+// ---- the automatic-update box on the Overview tab
+function fmtDate(s) {
+  if (!s) return "n/a";
+  const d = new Date(s + "T00:00:00Z");
+  return isNaN(d) ? s : d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+}
+function mdAgent() {
+  const ds = MD.data_status || {}, E = MD.estimates, lu = ds.last_update;
+  const rows = [
+    ["Last check", `${fmtDate(ds.checked)}${ds.outcome === "unchanged" ? " · no new data" : ds.outcome === "changed" ? " · new data, model re-estimated" : ""}`],
+    ["Last data update", lu ? `${fmtDate(lu.date)}<br><span style="color:var(--muted)">${esc(lu.summary)}</span>` : "none recorded yet"],
+    ["Data through", `national accounts ${esc(E.last_quarter.qna)}, monthly series ${esc(E.last_quarter.monthly)}`],
+    ["Last estimation", `${fmtDate(E.built)}`],
+  ];
+  if (ds.kept_from_cache && ds.kept_from_cache.length) rows.push(["Not reachable", `<span class="warn">${ds.kept_from_cache.length} source file${ds.kept_from_cache.length > 1 ? "s" : ""} kept from the previous fetch</span>`]);
+  $("#mdAgent").innerHTML = `<div class="tag">Updated automatically</div>
+    <p>A scheduled agent checks Statistics Norway, Norges Bank, the ECB, Eurostat, the OECD and the World Bank ${esc(ds.schedule || "twice a week")}. When new observations or revisions arrive it refetches the data, re-estimates every equation, re-runs the simulations and republishes this page.</p>
+    <dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join("")}</dl>`;
+}
+
+// ---------------------------------------------------------------- tabs, theme toggle, boot
+// forecast, policy and equations share one simulation state (the side panels on Forecast and Policy both drive mdUpdate,
+// which draws the forecast, shock, loss and u* charts at once); the other tabs are drawn on first visit.
+let simDrawn = false;
+function tabSim() { if (!simDrawn) { mdBuildSide(); mdUpdate(); simDrawn = true; } }
+function tabEquations() { tabSim(); mdEquations(); mdLongrun(); }
+function tabRecord() { mdTracking(); mdForecastEval(); }
+const TABS = {overview: null, forecast: tabSim, policy: tabSim, equations: tabEquations, robustness: mdRobust, record: tabRecord, notes: mdDepartures};
+const WIDE = new Set(["forecast", "policy", "equations", "robustness", "record"]);
+const drawn = new Set();
+function showTab(name, force) {
+  if (!TABS.hasOwnProperty(name)) name = "overview";
+  document.querySelectorAll("section.pane").forEach(s => s.classList.toggle("active", s.id === "pane-" + name));
+  document.querySelectorAll("nav a.tab").forEach(a => a.classList.toggle("active", a.dataset.tab === name));
+  document.querySelector("main.wrap").classList.toggle("wide", WIDE.has(name));
+  if (MD && modelSim && TABS[name] && (force || !drawn.has(name))) { TABS[name](); drawn.add(name); }
+  document.querySelectorAll(`#pane-${name} .plot`).forEach(p => p.data && Plotly.Plots.resize(p));   // charts drawn while the pane was hidden
+  window.scrollTo({top: 0});
+}
+function currentTab() { return (location.hash || "#overview").slice(1).split("?")[0]; }
+window.addEventListener("hashchange", () => showTab(currentTab()));
+$("#themeBtn").addEventListener("click", () => {
+  const root = document.documentElement; root.dataset.theme = isDark() ? "light" : "dark";
+  try { localStorage.setItem("theme", root.dataset.theme); } catch (e) {}
+  drawn.clear(); simDrawn = false; showTab(currentTab(), true);
+});
+try { const t = new URLSearchParams(location.search).get("theme") || localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (!document.documentElement.dataset.theme) { drawn.clear(); simDrawn = false; showTab(currentTab(), true); } });
+modelTab();
+if (MD && modelSim) { $("#mdLossLam").addEventListener("input", () => mdLossRender()); $("#mdLossKap").addEventListener("input", () => mdLossRender()); }
+$("#foot").innerHTML = `<p>Built ${esc(D.generated)}. A re-implementation in the spirit of Bårdsen, Eitrheim, Jansen and Nymoen's work, estimated on public data; not the authors' model and not a forecast by them. Every assumption, departure and source is on the <a href="#notes">Notes and sources</a> tab. Companion to the <a href="https://oyvind-eitrheim.jskjeltorp.workers.dev/" target="_blank" rel="noopener">dashboard of Øyvind Eitrheim</a>.</p>`;
+showTab(currentTab());
+</script>
+</body>
+</html>

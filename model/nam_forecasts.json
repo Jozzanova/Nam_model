@@ -1,0 +1,780 @@
+{
+ "collected": "2026-10-31",
+ "publications": [
+  {
+   "source": "LO Samfunnsnotat nr. 3/2026 'Konjunkturutsiktene' (LO Samfunnspolitisk avdeling; forecasts made with NAM, labelled 'LO/NAM mai 2026')",
+   "published": "2026-05",
+   "url": "https://www.lo.no/globalassets/samfunnsnotater/samfunnsnotat-3-2026-konjunkturutsiktene-mai.pdf",
+   "horizon": "annual 2026-2028 (2025 preliminary actuals)",
+   "model_version": "NAM as used by LO in spring 2026 (Normetrics documentation vintages 18 Mar / 8 Apr / 31 May 2026); update of the March 2026 round",
+   "exogenous_assumptions": "Brent oil 92 USD/bbl 2026, 80 in 2027, 77 in 2028 (March round: 61/62/63); I-44 kept at the average of 1-19 April 2026 over the whole horizon (-4.9% in 2026, -0.5% 2027, 0.0 2028; positive = weaker krone); policy rate: two hikes in 2026 then down towards 3.5% by end of horizon, in line with Norges Bank MPR 1/2026 path (average 4.2% in 2026 and 2027, 3.7% in 2028); public demand growth 1.5-2% p.a. incl. NATO 3.5%+1.5% defence target; euro-area inflation and trading-partner growth revised for the Iran-US war/Hormuz disruption",
+   "variables": {
+    "mainland_gdp_growth": [
+     {
+      "period": "2025",
+      "value": 1.8
+     },
+     {
+      "period": "2026",
+      "value": 1.5
+     },
+     {
+      "period": "2027",
+      "value": 1.5
+     },
+     {
+      "period": "2028",
+      "value": 1.3
+     }
+    ],
+    "household_consumption": [
+     {
+      "period": "2025",
+      "value": 2.7
+     },
+     {
+      "period": "2026",
+      "value": 2.0
+     },
+     {
+      "period": "2027",
+      "value": 1.9
+     },
+     {
+      "period": "2028",
+      "value": 2.0
+     }
+    ],
+    "public_consumption": [
+     {
+      "period": "2025",
+      "value": 1.5
+     },
+     {
+      "period": "2026",
+      "value": 2.3
+     },
+     {
+      "period": "2027",
+      "value": 1.7
+     },
+     {
+      "period": "2028",
+      "value": 1.1
+     }
+    ],
+    "traditional_goods_exports": [
+     {
+      "period": "2025",
+      "value": 6.4
+     },
+     {
+      "period": "2026",
+      "value": 2.8
+     },
+     {
+      "period": "2027",
+      "value": 1.6
+     },
+     {
+      "period": "2028",
+      "value": 1.3
+     }
+    ],
+    "employment": [
+     {
+      "period": "2025",
+      "value": 0.7
+     },
+     {
+      "period": "2026",
+      "value": 0.4
+     },
+     {
+      "period": "2027",
+      "value": 0.5
+     },
+     {
+      "period": "2028",
+      "value": 0.5
+     }
+    ],
+    "unemployment_lfs": [
+     {
+      "period": "2025",
+      "value": 4.5
+     },
+     {
+      "period": "2026",
+      "value": 4.5
+     },
+     {
+      "period": "2027",
+      "value": 4.5
+     },
+     {
+      "period": "2028",
+      "value": 4.5
+     }
+    ],
+    "cpi_inflation": [
+     {
+      "period": "2025",
+      "value": 3.1
+     },
+     {
+      "period": "2026",
+      "value": 3.2
+     },
+     {
+      "period": "2027",
+      "value": 2.4
+     },
+     {
+      "period": "2028",
+      "value": 2.2
+     }
+    ],
+    "cpi_ate_inflation": [
+     {
+      "period": "2025",
+      "value": 3.1
+     },
+     {
+      "period": "2026",
+      "value": 3.1
+     },
+     {
+      "period": "2027",
+      "value": 2.6
+     },
+     {
+      "period": "2028",
+      "value": 2.2
+     }
+    ],
+    "policy_rate": [
+     {
+      "period": "2025",
+      "value": 4.3
+     },
+     {
+      "period": "2026",
+      "value": 4.2
+     },
+     {
+      "period": "2027",
+      "value": 4.2
+     },
+     {
+      "period": "2028",
+      "value": 3.7
+     }
+    ],
+    "i44": [
+     {
+      "period": "2025",
+      "value": -0.6,
+      "unit": "percent change, positive = weaker krone"
+     },
+     {
+      "period": "2026",
+      "value": -4.9,
+      "unit": "percent change, positive = weaker krone"
+     },
+     {
+      "period": "2027",
+      "value": -0.5,
+      "unit": "percent change, positive = weaker krone"
+     },
+     {
+      "period": "2028",
+      "value": 0.0,
+      "unit": "percent change, positive = weaker krone"
+     }
+    ],
+    "oil_price_usd": [
+     {
+      "period": "2025",
+      "value": 68
+     },
+     {
+      "period": "2026",
+      "value": 92
+     },
+     {
+      "period": "2027",
+      "value": 80
+     },
+     {
+      "period": "2028",
+      "value": 77
+     }
+    ]
+   },
+   "notes": "Read from PDF table 'LOs konjunkturanslag' (pdftotext, layout mode). Revisions vs March in brackets in the PDF: GDP -0.3/-0.2/-0.2, LFS unemployment +0.1/+0.2/+0.2, CPI +0.1/-0.2/-0.2, policy rate +0.3/+0.5/+0.3. Investment rows (mainland gross investment -0.3/0.8/1.2; oil investment -1.0/-2.0/-3.0; public investment -1.7/3.7/3.2; housing investment -3.0/2.0/3.0 as printed) are misaligned in the text extraction and should be checked against the PDF before use. The note contains NAM shift simulations: Norges Bank's higher rate path lowers inflation only 0.1-0.2 pp but keeps unemployment at 4.5% instead of falling; a 'long oil crisis' scenario (130/120/110 USD) gives higher inflation and much higher unemployment. These are LO's forecasts produced with NAM, not forecasts published by Nymoen/Bårdsen themselves; registered unemployment, wage growth and house prices are not in the table."
+  },
+  {
+   "source": "LO Samfunnsnotat nr. 1/2026 'Konjunkturutsiktene' (March 2026; 'LO/NAM 1.kv.2026')",
+   "published": "2026-03",
+   "url": "https://www.lo.no/globalassets/okonomi-og-samfunn/konjunkturutsiktene-samfunnsnotat-1-2026.pdf",
+   "horizon": "annual 2026-2028",
+   "model_version": "NAM, spring 2026 vintage",
+   "exogenous_assumptions": "Brent 68 (2025), 61/62/63 USD 2026-2028; I-44 kept at average of 1-19 Feb 2026 (-3.5% 2026, -0.2% 2027, 0.0 2028); one 0.25 pp rate cut per year 2026-2028 (policy rate avg 3.9/3.7/3.4); public demand ~2% growth; SSB KT 4/2025 and Norges Bank PPR 4/2025 used for fiscal comparison",
+   "variables": {
+    "mainland_gdp_growth": [
+     {
+      "period": "2025",
+      "value": 1.8
+     },
+     {
+      "period": "2026",
+      "value": 1.8
+     },
+     {
+      "period": "2027",
+      "value": 1.7
+     },
+     {
+      "period": "2028",
+      "value": 1.5
+     }
+    ],
+    "household_consumption": [
+     {
+      "period": "2025",
+      "value": 2.7
+     },
+     {
+      "period": "2026",
+      "value": 2.6
+     },
+     {
+      "period": "2027",
+      "value": 2.2
+     },
+     {
+      "period": "2028",
+      "value": 2.2
+     }
+    ],
+    "public_consumption": [
+     {
+      "period": "2025",
+      "value": 1.5
+     },
+     {
+      "period": "2026",
+      "value": 2.5
+     },
+     {
+      "period": "2027",
+      "value": 2.0
+     },
+     {
+      "period": "2028",
+      "value": 1.5
+     }
+    ],
+    "gross_investment_mainland": [
+     {
+      "period": "2025",
+      "value": 0.2
+     },
+     {
+      "period": "2026",
+      "value": 0.3
+     },
+     {
+      "period": "2027",
+      "value": 1.0
+     },
+     {
+      "period": "2028",
+      "value": 2.1
+     }
+    ],
+    "petroleum_investment": [
+     {
+      "period": "2025",
+      "value": 8.2
+     },
+     {
+      "period": "2026",
+      "value": -1.0
+     },
+     {
+      "period": "2027",
+      "value": -6.0
+     },
+     {
+      "period": "2028",
+      "value": -3.0
+     }
+    ],
+    "public_investment": [
+     {
+      "period": "2025",
+      "value": 0.7
+     },
+     {
+      "period": "2026",
+      "value": -1.0
+     },
+     {
+      "period": "2027",
+      "value": 2.5
+     },
+     {
+      "period": "2028",
+      "value": 3.5
+     }
+    ],
+    "housing_investment": [
+     {
+      "period": "2025",
+      "value": -3.6
+     },
+     {
+      "period": "2026",
+      "value": -3.0
+     },
+     {
+      "period": "2027",
+      "value": 2.0
+     },
+     {
+      "period": "2028",
+      "value": 3.0
+     }
+    ],
+    "traditional_goods_exports": [
+     {
+      "period": "2025",
+      "value": 6.4
+     },
+     {
+      "period": "2026",
+      "value": 2.5
+     },
+     {
+      "period": "2027",
+      "value": 2.5
+     },
+     {
+      "period": "2028",
+      "value": 2.3
+     }
+    ],
+    "employment": [
+     {
+      "period": "2025",
+      "value": 0.7
+     },
+     {
+      "period": "2026",
+      "value": 0.6
+     },
+     {
+      "period": "2027",
+      "value": 0.6
+     },
+     {
+      "period": "2028",
+      "value": 0.5
+     }
+    ],
+    "unemployment_lfs": [
+     {
+      "period": "2025",
+      "value": 4.5
+     },
+     {
+      "period": "2026",
+      "value": 4.4
+     },
+     {
+      "period": "2027",
+      "value": 4.3
+     },
+     {
+      "period": "2028",
+      "value": 4.3
+     }
+    ],
+    "cpi_inflation": [
+     {
+      "period": "2025",
+      "value": 3.1
+     },
+     {
+      "period": "2026",
+      "value": 3.0
+     },
+     {
+      "period": "2027",
+      "value": 2.6
+     },
+     {
+      "period": "2028",
+      "value": 2.4
+     }
+    ],
+    "cpi_ate_inflation": [
+     {
+      "period": "2025",
+      "value": 3.1
+     },
+     {
+      "period": "2026",
+      "value": 3.1
+     },
+     {
+      "period": "2027",
+      "value": 2.4
+     },
+     {
+      "period": "2028",
+      "value": 2.2
+     }
+    ],
+    "policy_rate": [
+     {
+      "period": "2025",
+      "value": 4.3
+     },
+     {
+      "period": "2026",
+      "value": 3.9
+     },
+     {
+      "period": "2027",
+      "value": 3.7
+     },
+     {
+      "period": "2028",
+      "value": 3.4
+     }
+    ],
+    "i44": [
+     {
+      "period": "2025",
+      "value": -0.6,
+      "unit": "percent change, positive = weaker krone"
+     },
+     {
+      "period": "2026",
+      "value": -3.5,
+      "unit": "percent change, positive = weaker krone"
+     },
+     {
+      "period": "2027",
+      "value": -0.2,
+      "unit": "percent change, positive = weaker krone"
+     },
+     {
+      "period": "2028",
+      "value": 0.0,
+      "unit": "percent change, positive = weaker krone"
+     }
+    ],
+    "oil_price_usd": [
+     {
+      "period": "2025",
+      "value": 68
+     },
+     {
+      "period": "2026",
+      "value": 61
+     },
+     {
+      "period": "2027",
+      "value": 62
+     },
+     {
+      "period": "2028",
+      "value": 63
+     }
+    ]
+   },
+   "notes": "Read from PDF table 'LOs konjunkturanslag' (pdftotext). Table layout in this file is clean. Includes NAM shift scenarios ('høyrente': rate held at 4.5% to 2028 reaches target 2-3 quarters earlier but raises unemployment; 'stram finans')."
+  },
+  {
+   "source": "Normetrics (Nymoen) fan chart 'NAM forecast with estimated 90% uncertainty interval' for the policy rate vs Norges Bank MPR 3/2025 path (file fan_rnb.jpg)",
+   "published": "2025-12-18",
+   "url": "https://normetrics.no/wp-content/uploads/2025/12/fan_rnb.jpg",
+   "horizon": "approx. 2025Q3-2028Q2, quarterly (chart only)",
+   "model_version": "NAM, autumn 2025 vintage (documentation 10 Oct 2025)",
+   "exogenous_assumptions": "not stated (chart only); compares NAM's endogenous policy-rate forecast with Norges Bank's MPR 3/2025 rate path",
+   "variables": {
+    "policy_rate": [
+     {
+      "period": "2026Q1",
+      "value": 3.85,
+      "verified": "chart-read, approximate"
+     },
+     {
+      "period": "2026Q2",
+      "value": 3.7,
+      "verified": "chart-read, approximate"
+     },
+     {
+      "period": "2026Q4",
+      "value": 3.75,
+      "verified": "chart-read, approximate"
+     },
+     {
+      "period": "2027Q2",
+      "value": 3.8,
+      "verified": "chart-read, approximate"
+     },
+     {
+      "period": "2028Q2",
+      "value": 3.85,
+      "verified": "chart-read, approximate"
+     }
+    ]
+   },
+   "notes": "Values are read off the image by eye (NAM mean path falls from ~4.3 in 2025Q3 to a trough ~3.7 in mid-2026, then flat ~3.8-3.85 to 2028; 90% band roughly 3.0-4.8 in 2027 and 2.5-5.1 by 2028; Norges Bank's MPR 3/2025 path in the same chart declines to ~3.2 by 2028). The image was uploaded to the WordPress media library on 18 Dec 2025 but is not referenced by any page or post retrievable via the site's REST API, so it may belong to a client deliverable or an unpublished post. Treat as indicative only."
+  },
+  {
+   "source": "Normetrics 'Boligpris- og renteusikkerhet framover' / 'Housing price and interest rate uncertainty' (Ragnar Nymoen)",
+   "published": "2017-06-21",
+   "url": "https://normetrics.no/nam/nam-side-2/boligpis-og-renteusikkerhet/",
+   "pdf": "https://normetrics.no/wp-content/uploads/2017/06/Boligpris-og-NorgesBankrente_20juni2017.pdf",
+   "horizon": "annual 2017-2020 (quarterly fan chart 2017Q2-2020Q4)",
+   "model_version": "NAM 2017",
+   "exogenous_assumptions": "policy rate path = Norges Bank MPR 1/2017 (alternative: ~50 bp higher from mid-2018); data through 2017Q1",
+   "variables": {
+    "house_prices": [
+     {
+      "period": "2017",
+      "value": 7.4,
+      "scenario": "MPR 1/17 rate path"
+     },
+     {
+      "period": "2018",
+      "value": 0.6,
+      "scenario": "MPR 1/17 rate path"
+     },
+     {
+      "period": "2019",
+      "value": 0.7,
+      "scenario": "MPR 1/17 rate path"
+     },
+     {
+      "period": "2020",
+      "value": 1.9,
+      "scenario": "MPR 1/17 rate path"
+     }
+    ],
+    "house_prices_alt_rate_path": [
+     {
+      "period": "2017",
+      "value": 7.4,
+      "scenario": "rate path ~50bp higher from mid-2018"
+     },
+     {
+      "period": "2018",
+      "value": 0.6,
+      "scenario": "rate path ~50bp higher from mid-2018"
+     },
+     {
+      "period": "2019",
+      "value": 0.2,
+      "scenario": "rate path ~50bp higher from mid-2018"
+     },
+     {
+      "period": "2020",
+      "value": 1.1,
+      "scenario": "rate path ~50bp higher from mid-2018"
+     }
+    ]
+   },
+   "notes": "Table 1 in the PDF, read via pdftotext. Fan chart with 30/60/90% bands."
+  },
+  {
+   "source": "Normetrics 'Norway's unemployment rate on the ebb again' / 'Lavere arbeidsledighet framover' (Ragnar Nymoen)",
+   "published": "2017-06-04",
+   "url": "https://normetrics.no/nam/norways-unemployment-rate-on-the-ebb-again/",
+   "pdf": "https://normetrics.no/wp-content/uploads/2017/06/URforecast_03juni2017_eng.pdf",
+   "horizon": "quarterly 2017Q2-2020Q4 (fan chart; only 2017Q2 stated numerically)",
+   "model_version": "NAM 2017, same information set as the 30 May 2017 post",
+   "exogenous_assumptions": "not stated beyond national accounts 2017Q1 and NAV May 2017 data",
+   "variables": {
+    "unemployment_registered": [
+     {
+      "period": "2017Q2",
+      "value": 2.7
+     }
+    ]
+   },
+   "notes": "Text states forecast 2.7% for 2017Q2 (actual April 2.9, May 2.6). Rest of the path only as fan chart (90/60/30% bands) described as a 'slow ebb'."
+  },
+  {
+   "source": "Normetrics 'Arrival of a well announced upturn?' / 'Godt varslet oppgang på gang?' (Ragnar Nymoen)",
+   "published": "2017-05-30",
+   "url": "https://normetrics.no/nam/arrival-of-a-well-announced-upturn/",
+   "pdf": "https://normetrics.no/wp-content/uploads/2017/05/Announced-upturn.pdf",
+   "horizon": "annual 2017-2020 (fan chart 2017Q2-2020Q4, 70% bands)",
+   "model_version": "NAM 2017",
+   "exogenous_assumptions": "not stated; model updated with 2017Q1 national accounts",
+   "variables": {
+    "mainland_gdp_growth": [
+     {
+      "period": "2017",
+      "value": 2.0,
+      "verified": "text: 'could be set for two percent growth'"
+     }
+    ]
+   },
+   "notes": "Only headline number in text; chart shows rising annual growth in 2019-2020. Manufacturing turning positive, construction >2%, private services/retail up from 0.3% in 2016."
+  },
+  {
+   "source": "Normetrics Rapport 2/2019 'Økonometriske prognoser for makroøkonomiske pensjonsforutsetninger 2019-2035' (Ragnar Nymoen, for KLP)",
+   "published": "2019-10 (data as of 30 Sept 2019; posted on normetrics.no 2020-05-05)",
+   "url": "https://normetrics.no/rapporterreports/rapport-2-2019-fra-normetrics/",
+   "pdf": "https://normetrics.no/wp-content/uploads/2020/05/R02-2019-Prognoser-for-pensjonsforutsetninger_2019.pdf",
+   "horizon": "2019-2035, five-year averages (Table 1) and annual (Table 3 in PDF, not transcribed)",
+   "model_version": "NAM autumn 2019",
+   "exogenous_assumptions": "Norges Bank rate path PPR 3/2019 reproduced to 2022Q4, thereafter endogenous reaction function with half pre-2008 weight on inflation gap; foreign money-market rate from euro-area market data, positive from H1 2020, rising from 2022; foreign inflation 1.2/1.1/1.2/1.3% 2019-2022 (SSB KT 3/2019) then towards 2%; public consumption/investment, oil investment and export-market growth from SSB KT 3/2019, extended with 2023 rates; oil price 68 USD 2019Q3 falling to 60 USD by 2022 and kept at 60",
+   "variables": {
+    "cpi_inflation": [
+     {
+      "period": "2016-2020",
+      "value": 2.49,
+      "unit": "five-year average"
+     },
+     {
+      "period": "2021-2025",
+      "value": 1.88,
+      "unit": "five-year average"
+     },
+     {
+      "period": "2026-2030",
+      "value": 1.88,
+      "unit": "five-year average"
+     },
+     {
+      "period": "2031-2035",
+      "value": 1.94,
+      "unit": "five-year average"
+     }
+    ],
+    "wage_growth": [
+     {
+      "period": "2019",
+      "value": 3.2,
+      "unit": "annual wages per FTE; five-year averages"
+     },
+     {
+      "period": "2020",
+      "value": 3.2,
+      "unit": "annual wages per FTE; five-year averages"
+     },
+     {
+      "period": "2016-2020",
+      "value": 2.58,
+      "unit": "annual wages per FTE; five-year averages"
+     },
+     {
+      "period": "2021-2025",
+      "value": 2.72,
+      "unit": "annual wages per FTE; five-year averages"
+     },
+     {
+      "period": "2026-2030",
+      "value": 3.38,
+      "unit": "annual wages per FTE; five-year averages"
+     },
+     {
+      "period": "2031-2035",
+      "value": 3.64,
+      "unit": "annual wages per FTE; five-year averages"
+     }
+    ],
+    "five_year_government_bond_yield": [
+     {
+      "period": "2016-2020",
+      "value": 1.23
+     },
+     {
+      "period": "2021-2025",
+      "value": 1.85
+     },
+     {
+      "period": "2026-2030",
+      "value": 3.05
+     },
+     {
+      "period": "2031-2035",
+      "value": 3.7
+     },
+     {
+      "period": "2035Q4",
+      "value": 3.91
+     }
+    ],
+    "net_rate_bond_minus_wage": [
+     {
+      "period": "2016-2020",
+      "value": -1.35
+     },
+     {
+      "period": "2021-2025",
+      "value": -0.87
+     },
+     {
+      "period": "2026-2030",
+      "value": -0.33
+     },
+     {
+      "period": "2031-2035",
+      "value": 0.06
+     }
+    ]
+   },
+   "notes": "Table 1 read from PDF (pdftotext); the layout shifts row labels by one line, so column order (inflation, wage growth, 5-year rate, net rate) was verified against arithmetic (net = rate - wage) and the text. Historical row 2011-2015: 1.70/3.68/1.96/-1.72. Predecessor: Rapport 2/2018 (2018-2035) and Rapport 2/2017 (2017-2035), same commissioner (KLP)."
+  },
+  {
+   "source": "Normetrics Rapport 1/2019 'Lønnsprognoser for kommunene og landet 2019-2023' (Ragnar Nymoen, for KS)",
+   "published": "2019-03-11",
+   "url": "https://normetrics.no/rapporterreports/rapport-1-2019-fra-normetrics/",
+   "pdf": "https://normetrics.no/wp-content/uploads/2019/03/R01-2019-Modellbaserte-prognoser-for-kommuneloenn-mars-2019.pdf",
+   "horizon": "annual 2019-2023",
+   "model_version": "NAM, updated with QNA published Feb 2019; same apparatus as the 2015-2018 reports",
+   "exogenous_assumptions": "Norges Bank Dec 2018 rate path (2.1% end-2021); TBU CPI 2.2% for 2019",
+   "variables": {
+    "municipal_wage_growth": [
+     {
+      "period": "2019",
+      "value": 3.0
+     }
+    ]
+   },
+   "notes": "Summary only; detailed tables not transcribed. Predecessors: Rapport 1/2018 (2018-2022, https://normetrics.no/wp-content/uploads/2018/05/R01-2018-Modellbaserte-prognoser-for-kommuneloenn-mars-2018.pdf) and Rapport 1/2017 (2017-2021, https://normetrics.no/wp-content/uploads/2017/10/R01-2017-Modellbaserte-prognoser-for-kommunelønn-mars-2017.pdf); Rapport 2/2017 (https://normetrics.no/wp-content/uploads/2017/10/R02-2017-Prognoser-for-pensjonsforutsetninger.pdf) and 2/2018 (https://normetrics.no/wp-content/uploads/2019/03/R02-2018-Prognoser-for-pensjonsforutsetninger_2018.pdf) are the KLP pension-assumption forecasts."
+  },
+  {
+   "source": "Ragnar Nymoen, UiO lectures registered in NVA/Cristin (no files): 'NAM-prognoser januar 2016' (seminar for Finansdepartementets økonomer, 2016); 'NAM: Norwegian Aggregate Model; og: Om store prognosefeil' (Finansdepartementets rådgivende utvalg for modell- og metodespørsmål, 2015); 'Makroøkonomiske prognoser 2013-2016' (KLP conference, 2012)",
+   "published": "2012 / 2015 / 2016",
+   "url": "https://hdl.handle.net/11250/3846234 ; https://hdl.handle.net/11250/4384628 ; https://hdl.handle.net/11250/4902908",
+   "horizon": "2016-; 2015-; 2013-2016",
+   "model_version": "NAM vintages 2012-2016",
+   "exogenous_assumptions": "n/a",
+   "variables": {},
+   "notes": "The NVA records (API api.nva.unit.no) are of type 'Lecture' with no associated files, so no numbers could be retrieved."
+  },
+  {
+   "source": "Samfunnsøkonomisk Analyse AS, 'Norsk økonomi - boligmarkedet til 2028' (Rapport 37-2025, vol. 22 nr. 2-2025) - third-party forecasts produced with NAM",
+   "published": "2025-11-24",
+   "url": "https://cdn.sanity.io/files/4yzykl1i/production/627127d115a4c5ba4c55f8a10a7e362a558fa498.pdf/Norsk%20%C3%98konomi%202-2025.pdf",
+   "horizon": "2025-2028",
+   "model_version": "NAM (stated: 'developed by professors Ragnar Nymoen (UiO) and Gunnar Bårdsen (NTNU)')",
+   "exogenous_assumptions": "SØA's own assumptions on export markets, foreign rates and oil price",
+   "variables": {},
+   "notes": "Not transcribed; noted because SØA's semi-annual 'Norsk økonomi' house-price/macro reports (2024, 2025) are produced with NAM and contain national and regional house-price forecasts to 2028."
+  }
+ ],
+ "model_status_2026": "NAM is maintained by Nymoen and Bårdsen through Normetrics (ragnar.nymoen@normetrics.no); documentation re-issued 10 Oct 2025, 10 and 18 Mar, 8 Apr, 31 May, 2 Sep and 5 Oct 2026 (https://normetrics.no/wp-content/uploads/2026/10/NAMdocumentation.pdf, 2026 vintage ~330 endogenous variables, EViews; forecast example in the documentation has forecast origin 2025Q2/2025Q3 with 90% stochastic-simulation fan charts). The documentation refers to 'the normal published forecast horizons' and 'the published model forecast', but no NAM forecast tables are published on normetrics.no after the 2017 posts and the 2017-2019 KS/KLP reports. Forecasts are delivered to model users: LO (publishes LO/NAM forecasts in Samfunnsnotat konjunkturutsiktene, March and May 2026), NHO, KLP (pension assumptions), KS (municipal wages), Samfunnsøkonomisk Analyse (house-price reports), and Finanstilsynet (NAM-FT with a bank module, used for the baseline and stress scenarios in Finansielt utsyn / the annual bank stress test, incl. June 2026).",
+ "archive_summary": "Public NAM forecast material goes back to: DN/Samfunnsøkonomenes prognosepris submissions by Bårdsen and Nymoen (NAM won the prize for 2012 forecasts, DN 'Norges beste spåmenn'; the judge noted NAM was among the weakest the year before, i.e. 2011; the DN articles are paywalled so the submitted numbers could not be read; no evidence found of NAM participation after ~2013); KLP conference lecture 'Makroøkonomiske prognoser 2013-2016' (2012); Finansdepartementet seminars 2015 ('Om store prognosefeil') and January 2016 ('NAM-prognoser januar 2016'), no files; normetrics.no posts May-June 2017 (mainland GDP, registered unemployment, house prices with fan charts); Normetrics reports 1/2017-2/2019 (municipal wages 2017-2023, pension assumptions to 2035). After 2019/2020 the only public traces are the Dec 2025 policy-rate fan chart image and the LO/SØA/Finanstilsynet publications that use NAM. Track record: no systematic table of NAM forecasts next to realised outcomes is published. Evaluation material consists of Bårdsen, Kolsrud and Nymoen (2017, Journal of Forecasting, doi 10.1002/for.2459; summarised at https://normetrics.no/nam/nam-and-forecast-robustness-in-macroeconometric-models/ with a figure of NAM forecasts vs actuals 2007Q1-2011Q4: interest-rate forecasts failed after the financial crisis, others 'not so bad'), Bårdsen, Jansen and Nymoen (2002) on inflation forecast uncertainty, Falch and Nymoen (2011) on forecast accuracy of a forecast-targeting central bank, and the 2012 prognosepris. The 2021 forecast-evaluation images on normetrics.no concern CovidMod (Covid-19), not NAM. Norges Bank Watch: no edition authored by Nymoen or Bårdsen was found (only Bårdsen and Nymoen's Norges Bank Working Paper 2/2002 'Rente og inflasjon')."
+}

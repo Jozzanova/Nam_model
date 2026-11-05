@@ -108,14 +108,15 @@ def describe(res, d1):
         by_q = {}
         for col, (la, lb) in res["new_quarters"].items():
             by_q.setdefault(lb, []).append(col)
-        parts.append("new observations: " + "; ".join(f"{q} for {families(sorted(cols))}" for q, cols in sorted(by_q.items())))
+        parts.append("new observations " + "; ".join(f"for {q}: {families(sorted(cols))}" for q, cols in sorted(by_q.items())))
     if res["revised"]:
         parts.append("revisions in " + families(sorted(res["revised"])))
     if res["shortened"]:
         parts.append("shortened: " + ", ".join(f"{c} ({a} to {b})" for c, (a, b) in res["shortened"].items()))
     if res["added"]:
         parts.append("added: " + ", ".join(res["added"]))
-    return ". ".join(parts) + ("." if parts else "no change")
+    s = "; ".join(parts) if parts else "no change"
+    return s[0].upper() + s[1:]
 
 
 def main():

@@ -1,0 +1,99 @@
+{
+ "new_quarters": {
+  "u_lfs": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "u_lfs_persons": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "lf_lfs": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "u_lfs_sa": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "ppi_ea": [
+   "2026Q2",
+   "2026Q3"
+  ]
+ },
+ "shortened": {},
+ "revised": {
+  "u_lfs_sa": {
+   "cells": 1,
+   "first": "2025Q3",
+   "max_rel": 0.021739130434782726,
+   "at": "2025Q3"
+  }
+ },
+ "dropped": [],
+ "added": [],
+ "changed": true,
+ "checked": "2026-11-05",
+ "fetched": "2026-11-05",
+ "kept_from_cache": [],
+ "failures": [],
+ "last_quarter": {
+  "gdp_ml": "2026Q2",
+  "cpi": "2026Q3",
+  "cpi_ate": "2026Q3",
+  "w_hour": "2026Q2",
+  "u_reg": "2026Q2",
+  "pi_defl": "2026Q2",
+  "i44": "2026Q3",
+  "policy_rate": "2026Q3",
+  "nibor3m": "2026Q3",
+  "hicp_ea": "2026Q3",
+  "ppi_ea": "2026Q3",
+  "oil_brent": "2026Q3"
+ },
+ "summary": "New observations for 2026Q3: labour force survey (Statistics Norway), producer prices (Eurostat); revisions in labour force survey (Statistics Norway)",
+ "last_update": {
+  "date": "2026-11-05",
+  "summary": "New observations for 2026Q3: labour force survey (Statistics Norway), producer prices (Eurostat); revisions in labour force survey (Statistics Norway)",
+  "new_quarters": {
+   "u_lfs": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "u_lfs_persons": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "lf_lfs": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "u_lfs_sa": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "ppi_ea": [
+    "2026Q2",
+    "2026Q3"
+   ]
+  },
+  "revised": [
+   "u_lfs_sa"
+  ],
+  "last_quarter": {
+   "gdp_ml": "2026Q2",
+   "cpi": "2026Q3",
+   "cpi_ate": "2026Q3",
+   "w_hour": "2026Q2",
+   "u_reg": "2026Q2",
+   "pi_defl": "2026Q2",
+   "i44": "2026Q3",
+   "policy_rate": "2026Q3",
+   "nibor3m": "2026Q3",
+   "hicp_ea": "2026Q3",
+   "ppi_ea": "2026Q3",
+   "oil_brent": "2026Q3"
+  }
+ },
+ "outcome": "changed"
+}

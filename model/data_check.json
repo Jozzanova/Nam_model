@@ -1,40 +1,12 @@
 {
- "new_quarters": {
-  "u_lfs": [
-   "2026Q2",
-   "2026Q3"
-  ],
-  "u_lfs_persons": [
-   "2026Q2",
-   "2026Q3"
-  ],
-  "lf_lfs": [
-   "2026Q2",
-   "2026Q3"
-  ],
-  "u_lfs_sa": [
-   "2026Q2",
-   "2026Q3"
-  ],
-  "ppi_ea": [
-   "2026Q2",
-   "2026Q3"
-  ]
- },
+ "new_quarters": {},
  "shortened": {},
- "revised": {
-  "u_lfs_sa": {
-   "cells": 1,
-   "first": "2025Q3",
-   "max_rel": 0.021739130434782726,
-   "at": "2025Q3"
-  }
- },
+ "revised": {},
  "dropped": [],
  "added": [],
- "changed": true,
- "checked": "2026-11-05",
- "fetched": "2026-11-05",
+ "changed": false,
+ "checked": "2026-11-06",
+ "fetched": "2026-11-06",
  "kept_from_cache": [],
  "failures": [],
  "last_quarter": {
@@ -51,7 +23,7 @@
   "ppi_ea": "2026Q3",
   "oil_brent": "2026Q3"
  },
- "summary": "New observations for 2026Q3: labour force survey (Statistics Norway), producer prices (Eurostat); revisions in labour force survey (Statistics Norway)",
+ "summary": "No change",
  "last_update": {
   "date": "2026-11-05",
   "summary": "New observations for 2026Q3: labour force survey (Statistics Norway), producer prices (Eurostat); revisions in labour force survey (Statistics Norway)",
@@ -95,5 +67,5 @@
    "oil_brent": "2026Q3"
   }
  },
- "outcome": "changed"
+ "outcome": "unchanged"
 }

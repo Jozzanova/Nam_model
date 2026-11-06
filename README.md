@@ -5,9 +5,7 @@ Bårdsen, Eitrheim, Jansen and Nymoen (BJN2003, ABE2005, BN2008, NAM2026), re-es
 Statistics Norway, Norges Bank, the ECB, Eurostat, the OECD and the World Bank. It began as the "NAM-type model" tab
 of the Øyvind Eitrheim dashboard (`C:\claude_code\eitrheim`) and is the same model, reorganised into tabs.
 
-Live: https://nam-type-model.jskjeltorp.workers.dev (private: Cloudflare Access, invited emails only; `src/worker.js` refuses
-any request that did not come through Access before serving the page, the same fail-closed design as the equity factors
-dashboard. The Access application "NAM-type model of Norway" and its invited list are managed in Cloudflare Zero Trust.)
+Live: https://nam-type-model.jskjeltorp.workers.dev
 
 ## Tabs
 

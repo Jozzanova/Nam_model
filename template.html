@@ -1102,7 +1102,7 @@ try { const t = new URLSearchParams(location.search).get("theme") || localStorag
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (!document.documentElement.dataset.theme) { drawn.clear(); simDrawn = false; showTab(currentTab(), true); } });
 modelTab();
 if (MD && modelSim) { $("#mdLossLam").addEventListener("input", () => mdLossRender()); $("#mdLossKap").addEventListener("input", () => mdLossRender()); }
-$("#foot").innerHTML = `<p>Built ${esc(D.generated)}. A re-implementation in the spirit of Bårdsen, Eitrheim, Jansen and Nymoen's work, estimated on public data; not the authors' model and not a forecast by them. Every assumption, departure and source is on the <a href="#notes">Notes and sources</a> tab. Companion to the <a href="https://oyvind-eitrheim.jskjeltorp.workers.dev/" target="_blank" rel="noopener">dashboard of Øyvind Eitrheim</a>.</p>`;
+$("#foot").innerHTML = `<p>Built ${esc(D.generated)}. A re-implementation in the spirit of Bårdsen, Eitrheim, Jansen and Nymoen's work, estimated on public data; not the authors' model and not a forecast by them. Every assumption, departure and source is on the <a href="#notes">Notes and sources</a> tab.</p>`;
 showTab(currentTab());
 </script>
 </body>

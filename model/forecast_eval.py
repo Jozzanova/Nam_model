@@ -116,6 +116,8 @@ def main(argv=None):
     errors = {v: {m: [[] for _ in range(Hh)] for m in MODELS} for v in VARS}        # errors[v][m][h-1] = list of (origin, target, error)
     for oq in origins:
         o = pos[oq]; hmax = min(Hh, pos[end] - o); t1 = o + hmax
+        # the exchange-rate drift assumption as on the dashboard: the equation's constant is off beyond each origin unless kept
+        X["fx_drift"] = [1.0 if i <= o or sim["assumptions"].get("fx_drift") == "est" else 0.0 for i in range(T)]
         # the model and the dVAR, re-estimated at the origin
         P = {"eqcm": json.loads(json.dumps(P0)), "dvar": json.loads(json.dumps(P0))}; last_res = {}
         for k in SIM_EQS:

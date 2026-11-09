@@ -67,6 +67,8 @@ def extend_exogenous(d: pd.DataFrame, origin: int, T: int, assume: dict, nb: dic
     for i in range(last + 1, T):
         yr = idx[i][:4]
         X["Rs"][i] = float(path[yr]) if yr in path else X["Rs"][i - 1]
+    # the exchange-rate equation's constant applies over the data; beyond the origin only if the drift assumption keeps it
+    X["fx_drift"] = [1.0 if i <= origin or assume.get("fx_drift") == "est" else 0.0 for i in range(T)]
     # HP trend continued at its mean growth over the last 40 quarters
     last = max(i for i in range(T) if not math.isnan(X["ytrend"][i]))
     gtr = (X["ytrend"][last] - X["ytrend"][last - 40]) / 40
@@ -117,7 +119,7 @@ def simulate(P: dict, X: dict, H: dict, t0: int, t1: int, R_path: list | None, s
             # 4 exchange rate
             c = eq["fx_level"] if lr["use_alpha_v"] else eq["fx"]
             dRd = X["d_it"][t] * ((R[t] - X["Rs"][t]) - (R[t - 1] - X["Rs"][t - 1]))
-            v[t] = v[t - 1] + c["const"] + c["dRdiff_it"] * dRd + c["Doil"] * (X["oil"][t] - X["oil"][t - 1]) + c["Dv_l1"] * (v[t - 1] - v[t - 2]) \
+            v[t] = v[t - 1] + c["const"] * X["fx_drift"][t] + c["dRdiff_it"] * dRd + c["Doil"] * (X["oil"][t] - X["oil"][t - 1]) + c["Dv_l1"] * (v[t - 1] - v[t - 2]) \
                 + (c["ecm_v_l1"] * ecm_v(t - 1) if lr["use_alpha_v"] else 0.0) + dum(c, t) + r("fx_level" if lr["use_alpha_v"] else "fx", t)
             # 5 import prices
             c = eq["imp"]
@@ -246,8 +248,9 @@ def main(argv=None):
     nbv = nb["variables"]
     rs_path = {x["period"]: x["value"] for x in nbv.get("trading_partner_policy_rate", []) if "Q" not in x["period"] and "M" not in x["period"]}
     z10 = float(100 * (d.z.dropna().iloc[-1] - d.z.dropna().iloc[-41]) / 10); g10 = float(100 * (d.g.dropna().iloc[-1] - d.g.dropna().iloc[-41]) / 10)
-    assume = {"z_growth": round(z10, 2), "g_growth": round(g10, 2), "pf_infl": 2.0, "pstar_infl": 2.0, "pen_infl": 2.0, "Rs_path": rs_path,
-              "labels": {"z_growth": "Productivity z: four-quarter growth, % (default = average of the last ten years)",
+    assume = {"z_growth": round(z10, 2), "g_growth": round(g10, 2), "pf_infl": 2.0, "pstar_infl": 2.0, "pen_infl": 2.0, "Rs_path": rs_path, "fx_drift": "none",
+              "labels": {"fx_drift": "Exchange rate: the equation's constant (the average quarterly depreciation over the estimation sample) is set to zero beyond the origin, so only the interest-rate differential and the oil price move the krone; the equation has no level term that would otherwise anchor it, and the constant would turn the sample's drift into a trend. 'Estimated constant' in the panel keeps it",
+                         "z_growth": "Productivity z: four-quarter growth, % (default = average of the last ten years)",
                          "g_growth": "Public consumption g: four-quarter growth, % (default = average of the last ten years)",
                          "pf_infl": "Foreign producer prices pf: four-quarter inflation, %", "pstar_infl": "Foreign consumer prices p*: four-quarter inflation, %",
                          "pen_infl": "Energy prices pe: four-quarter inflation, %",

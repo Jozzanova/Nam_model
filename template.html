@@ -742,7 +742,8 @@ function mdBuildSide() {
   $("#mdAssume").innerHTML = numRow("mdA_z_growth", "productivity z, four-quarter growth %", A.z_growth, 0.1, -2, 5) + numRow("mdA_g_growth", "public consumption g, growth %", A.g_growth, 0.1, -2, 5)
     + numRow("mdA_pf_infl", "foreign producer prices pf, %", A.pf_infl, 0.1, -4, 8) + numRow("mdA_pstar_infl", "foreign consumer prices p*, %", A.pstar_infl, 0.1, -2, 8) + numRow("mdA_pen_infl", "energy prices pe, %", A.pen_infl, 0.5, -15, 15)
     + `<div class="kv"><span>foreign short rate R*</span><select id="mdA_rs" class="num" style="width:auto"><option value="nb">Norges Bank's trading-partner path</option><option value="const">constant</option></select></div>`
-    + `<div class="note">${esc(A.labels.Rs_path)}. ${esc(A.labels.oil)}; ${esc(A.labels.t1_t3)}; ${esc(A.labels.ytrend)}. Defaults for z and g are their average growth over the last ten years.</div>`;
+    + `<div class="kv"><span>exchange-rate drift</span><select id="mdA_fxd" class="num" style="width:auto"><option value="none">none (constant set to zero)</option><option value="est">estimated constant, ${mdN(100 * E.equations.fx.coef.find(c => c.name === "const").est, 2)} % a quarter</option></select></div>`
+    + `<div class="note">${esc(A.labels.fx_drift)}. ${esc(A.labels.Rs_path)}. ${esc(A.labels.oil)}; ${esc(A.labels.t1_t3)}; ${esc(A.labels.ytrend)}. Defaults for z and g are their average growth over the last ten years.</div>`;
   // short-run sliders, one group per equation
   const names = MD_NAMES, eqKeys = MD_SLIDER_EQS.filter(k => E.equations[k]);
   $("#mdSliders").innerHTML = eqKeys.map(k => {
@@ -763,7 +764,7 @@ function mdBuildSide() {
   let raf = 0, dragTimer = null;
   const drag = () => { clearTimeout(dragTimer); dragTimer = setTimeout(upd, 200); if (!raf) raf = requestAnimationFrame(() => { raf = 0; mdReadSide(); mdUpdate(true); }); };
   document.querySelectorAll("input[name=mdRule]").forEach(r => r.addEventListener("change", upd));
-  ["#mdRpath", "#mdA_rs", "#mdL_ppp"].forEach(s => $(s).addEventListener("change", upd));
+  ["#mdRpath", "#mdA_rs", "#mdA_fxd", "#mdL_ppp"].forEach(s => $(s).addEventListener("change", upd));
   for (const box of ["#mdRuleParams", "#mdLrParams", "#mdAssume", "#mdSliders"]) {
     $(box).addEventListener("input", e => { const r = e.target.closest(".sl"); if (!r || e.target.type !== "range") return; r.querySelector("input[type=number]").value = +(+e.target.value).toPrecision(6); drag(); });
     $(box).addEventListener("change", e => { if (e.target.type !== "number") return; const r = e.target.closest(".sl"); if (r) r.querySelector("input[type=range]").value = e.target.value; upd(); });
@@ -780,6 +781,7 @@ function mdReadSide() {
   P.rule.theta_pi = v("#mdR_theta_pi"); P.rule.theta_y = v("#mdR_theta_y"); P.rule.rho = v("#mdR_rho"); P.rule.rr_bar = v("#mdR_rr_bar"); P.rule.pi_bar = v("#mdR_pi_bar"); P.rule.g_bar = v("#mdR_g_bar");
   P.lr.gamma_u = v("#mdL_gamma_u"); P.lr.phi = v("#mdL_phi"); P.lr.y_g = v("#mdL_y_g"); P.lr.y_rex = v("#mdL_y_rex"); P.lr.y_rr = v("#mdL_y_rr"); P.lr.use_alpha_v = $("#mdL_ppp").checked;
   for (const k of ["z_growth", "g_growth", "pf_infl", "pstar_infl", "pen_infl"]) mdState.assume[k] = v("#mdA_" + k);
+  mdState.assume.fx_drift = $("#mdA_fxd").value;
   for (const id in DV) $("#" + id).closest(".sl").classList.toggle("changed", v("#" + id) !== DV[id]);
   document.querySelectorAll("#mdSliders .sl").forEach(r => {
     const rg = r.querySelector("input[type=range]"), est = MD.estimates.equations[r.dataset.eq].coef.find(c => c.name === r.dataset.c).est;
@@ -795,6 +797,7 @@ function mdWriteSide() {
   set("#mdR_theta_pi", P.rule.theta_pi); set("#mdR_theta_y", P.rule.theta_y); set("#mdR_rho", P.rule.rho); set("#mdR_rr_bar", P.rule.rr_bar); set("#mdR_pi_bar", P.rule.pi_bar); set("#mdR_g_bar", P.rule.g_bar);
   set("#mdL_gamma_u", P.lr.gamma_u); set("#mdL_phi", P.lr.phi); set("#mdL_y_g", P.lr.y_g); set("#mdL_y_rex", P.lr.y_rex); set("#mdL_y_rr", P.lr.y_rr); $("#mdL_ppp").checked = !!P.lr.use_alpha_v;
   for (const k of ["z_growth", "g_growth", "pf_infl", "pstar_infl", "pen_infl"]) set("#mdA_" + k, mdState.assume[k]);
+  $("#mdA_fxd").value = mdState.assume.fx_drift || "none";
   document.querySelectorAll("#mdSliders .sl").forEach(r => { const x = P.eq[r.dataset.eq][r.dataset.c], est = MD.estimates.equations[r.dataset.eq].coef.find(c => c.name === r.dataset.c).est; r.querySelector("input[type=range]").value = x; r.querySelector("input[type=number]").value = +x.toPrecision(6); r.classList.toggle("changed", Math.abs(x - est) > 1e-9); });
   mdSideRefresh();
 }

@@ -16,6 +16,8 @@ const modelSim = (() => {
     { const last = inp.exo_last.Rs, path = assume.Rs_path || {};
       for (let i = last + 1; i < T; i++) { const yr = idx[i].slice(0, 4); X.Rs[i] = yr in path ? +path[yr] : X.Rs[i - 1]; } }
     { const last = inp.exo_last.ytrend; for (let i = last + 1; i < T; i++) X.ytrend[i] = X.ytrend[i - 1] + inp.ytrend_growth; }
+    // the exchange-rate equation's constant applies over the data; beyond the origin only if the drift assumption keeps it
+    X.fx_drift = Array.from({length: T}, (_, i) => i <= inp.origin_pos || assume.fx_drift === "est" ? 1 : 0);
     return X;
   }
 
@@ -53,7 +55,7 @@ const modelSim = (() => {
         }
         c = lr.use_alpha_v ? eq.fx_level : eq.fx;
         const dRd = X.d_it[t] * ((R[t] - X.Rs[t]) - (R[t - 1] - X.Rs[t - 1]));
-        v[t] = v[t - 1] + c.const + c.dRdiff_it * dRd + c.Doil * (X.oil[t] - X.oil[t - 1]) + c.Dv_l1 * (v[t - 1] - v[t - 2])
+        v[t] = v[t - 1] + c.const * X.fx_drift[t] + c.dRdiff_it * dRd + c.Doil * (X.oil[t] - X.oil[t - 1]) + c.Dv_l1 * (v[t - 1] - v[t - 2])
           + (lr.use_alpha_v ? c.ecm_v_l1 * ecm_v(t - 1) : 0) + dum(c, t) + r(lr.use_alpha_v ? "fx_level" : "fx", t);
         c = eq.imp;
         pi[t] = pi[t - 1] + c.const + c.Dv * (v[t] - v[t - 1]) + c.Dpf * (X.pf[t] - X.pf[t - 1]) + c.Dv_l1 * (v[t - 1] - v[t - 2])

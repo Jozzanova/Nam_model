@@ -576,7 +576,8 @@ const short = (t, n = 58) => t.length > n ? t.slice(0, n - 2) + "…" : t;
 const hide = (sel, off) => { const el = $(sel); if (el) el.style.display = off ? "none" : ""; };
 function base(extra) {
   return Object.assign({
-    paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)",
+    // the paper colour is the card colour, not transparent: Plotly paints the trace-name box of a hover label with it
+    paper_bgcolor: css("--surface"), plot_bgcolor: "rgba(0,0,0,0)",
     font: {family: "-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif", size: 12, color: css("--text-2")},
     margin: {l: 48, r: 16, t: 8, b: 40}, hovermode: "closest",
     hoverlabel: {bgcolor: css("--surface"), bordercolor: css("--line"), font: {color: css("--text"), size: 12}},

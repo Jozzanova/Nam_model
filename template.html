@@ -610,7 +610,18 @@ function fastUpdate(id, traces) {
 }
 // a frame still waiting from a drag must not run after the full redraw (it would land on whatever trace then has that index)
 function flushAnim(id) { const el = document.getElementById(id); if (el && el._transitionData && el._transitionData._frameQueue && el._transitionData._frameQueue.length) Plotly.animate(el, [], {mode: "immediate"}).catch(() => {}); }
-function plot(id, traces, layout, cfg) { if (mdDragging && fastUpdate(id, traces)) return; flushAnim(id); Plotly.react(id, traces, base(layout), cfg || CFG); }
+// A chart in a hidden pane is not drawn (Plotly would size it to its 700 x 450 default and the card would scroll); the
+// draw is kept and run by showTab when the pane appears.
+const pendingPlots = {};
+function plot(id, traces, layout, cfg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const pane = el.closest("section.pane");
+  if (pane && !pane.classList.contains("active")) { pendingPlots[id] = [traces, layout, cfg]; return; }
+  delete pendingPlots[id];
+  if (mdDragging && fastUpdate(id, traces)) return;
+  flushAnim(id); Plotly.react(el, traces, base(layout), cfg || CFG);
+}
 function openOnClick(id) { document.getElementById(id).on("plotly_click", e => { const u = e.points[0]?.customdata?.url; if (typeof u === "string" && u.startsWith("http")) window.open(u, "_blank"); }); }
 const axis = extra => Object.assign({gridcolor: css("--grid"), zeroline: false, linecolor: css("--line"), tickfont: {color: css("--text-2")}}, extra);
 
@@ -1149,7 +1160,7 @@ function showTab(name, force) {
   document.querySelectorAll("nav a.tab").forEach(a => a.classList.toggle("active", a.dataset.tab === name));
   document.querySelector("main.wrap").classList.toggle("wide", WIDE.has(name));
   if (MD && modelSim && TABS[name] && (force || !drawn.has(name))) { TABS[name](); drawn.add(name); }
-  document.querySelectorAll(`#pane-${name} .plot`).forEach(p => p.data && Plotly.Plots.resize(p));   // charts drawn while the pane was hidden
+  document.querySelectorAll(`#pane-${name} .plot`).forEach(p => { if (pendingPlots[p.id]) plot(p.id, ...pendingPlots[p.id]); else if (p.data) Plotly.Plots.resize(p); });   // draws deferred while the pane was hidden
   window.scrollTo({top: 0});
 }
 function currentTab() { return (location.hash || "#overview").slice(1).split("?")[0]; }

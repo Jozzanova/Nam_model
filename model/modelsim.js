@@ -13,8 +13,11 @@ const modelSim = (() => {
       for (let i = last + 1; i < T; i++) X[c][i] = X[c][i - 4] + Math.log(1 + gr / 100);
     }
     for (const c of ["oil", "t1", "t3"]) { const last = inp.exo_last[c]; for (let i = last + 1; i < T; i++) X[c][i] = X[c][i - 1]; }
-    { const last = inp.exo_last.Rs, path = assume.Rs_path || {};
-      for (let i = last + 1; i < T; i++) { const yr = idx[i].slice(0, 4); X.Rs[i] = yr in path ? +path[yr] : X.Rs[i - 1]; } }
+    { // R*: each year's value at mid-year (between Q2 and Q3), linear between the last observation and the anchors, then constant
+      const last = inp.exo_last.Rs, path = assume.Rs_path || {}, anchors = [[last, X.Rs[last]]];
+      for (const yr of Object.keys(path).sort()) { const q1 = idx.indexOf(yr + "Q1"); if (q1 >= 0 && q1 + 1.5 > last) anchors.push([q1 + 1.5, +path[yr]]); }
+      for (let i = last + 1; i < T; i++) { const nxt = anchors.find(a => a[0] >= i); if (!nxt) { X.Rs[i] = anchors[anchors.length - 1][1]; continue; }
+        const prv = anchors.filter(a => a[0] < i).pop(); X.Rs[i] = prv[1] + (nxt[1] - prv[1]) * (i - prv[0]) / (nxt[0] - prv[0]); } }
     { const last = inp.exo_last.ytrend; for (let i = last + 1; i < T; i++) X.ytrend[i] = X.ytrend[i - 1] + inp.ytrend_growth; }
     // the exchange-rate equation's constant applies over the data; beyond the origin only if the drift assumption keeps it
     X.fx_drift = Array.from({length: T}, (_, i) => i <= inp.origin_pos || assume.fx_drift === "est" ? 1 : 0);

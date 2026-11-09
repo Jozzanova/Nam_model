@@ -61,12 +61,19 @@ def extend_exogenous(d: pd.DataFrame, origin: int, T: int, assume: dict, nb: dic
     for c in ["oil", "t1", "t3"]:
         last = max(i for i in range(T) if not math.isnan(X[c][i]))
         for i in range(last + 1, T): X[c][i] = X[c][i - 1]
-    # foreign short rate: Norges Bank's trading-partner policy-rate assumption (annual) interpolated, then constant
+    # foreign short rate: Norges Bank's trading-partner policy-rate assumption is annual; each year's value is placed at
+    # mid-year (between Q2 and Q3) and the path is linear between the last observation and these anchors, then constant
     last = max(i for i in range(T) if not math.isnan(X["Rs"][i]))
     path = assume.get("Rs_path") or {}
+    anchors = [(float(last), X["Rs"][last])]
+    for yr in sorted(path):
+        q1 = next((i for i in range(T) if idx[i] == yr + "Q1"), None)
+        if q1 is not None and q1 + 1.5 > last: anchors.append((q1 + 1.5, float(path[yr])))
     for i in range(last + 1, T):
-        yr = idx[i][:4]
-        X["Rs"][i] = float(path[yr]) if yr in path else X["Rs"][i - 1]
+        nxt = next((a for a in anchors if a[0] >= i), None)
+        if nxt is None: X["Rs"][i] = anchors[-1][1]; continue
+        prv = [a for a in anchors if a[0] < i][-1]
+        X["Rs"][i] = prv[1] + (nxt[1] - prv[1]) * (i - prv[0]) / (nxt[0] - prv[0])
     # the exchange-rate equation's constant applies over the data; beyond the origin only if the drift assumption keeps it
     X["fx_drift"] = [1.0 if i <= origin or assume.get("fx_drift") == "est" else 0.0 for i in range(T)]
     # HP trend continued at its mean growth over the last 40 quarters
@@ -254,7 +261,7 @@ def main(argv=None):
                          "g_growth": "Public consumption g: four-quarter growth, % (default = average of the last ten years)",
                          "pf_infl": "Foreign producer prices pf: four-quarter inflation, %", "pstar_infl": "Foreign consumer prices p*: four-quarter inflation, %",
                          "pen_infl": "Energy prices pe: four-quarter inflation, %",
-                         "Rs_path": "Foreign short rate R*: Norges Bank's trading-partner policy-rate assumption by year (MPR 3/26 Table 3), then constant",
+                         "Rs_path": "Foreign short rate R*: Norges Bank's trading-partner policy-rate assumption by year (MPR 3/26 Table 3), each year's value at mid-year and the path linear between them, then constant",
                          "oil": "Oil price: constant at the last quarter", "t1_t3": "Tax wedges τ1, τ3: constant at the last quarter",
                          "ytrend": "HP trend of mainland GDP continued at its mean growth over the last 40 quarters (the gap is y − trend)",
                          "R": "Policy rate: Norges Bank's MPR 3/26 quarterly path to 2030Q2, then constant (exogenous-rate case)"}}

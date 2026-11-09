@@ -564,7 +564,7 @@ section.pane .grid3 .plot { min-height: 300px; }
 </footer>
 </main>
 
-<script>/*__MODELSIM__*/</script>
+<script id="modelsimSrc">/*__MODELSIM__*/</script>
 <script>
 const D = /*__DATA__*/null;
 const $ = s => document.querySelector(s);
@@ -586,7 +586,27 @@ function base(extra) {
   }, extra || {});
 }
 const CFG = {displayModeBar: false, responsive: true};
-function plot(id, traces, layout, cfg) { Plotly.react(id, traces, base(layout), cfg || CFG); }
+// While a slider is dragged (mdDragging) a chart that already exists with the same traces is updated in place through
+// Plotly.animate, which only rewrites the line paths (about a quarter of the cost of Plotly.react); a line that would
+// leave the current axis range, or any change in the set of traces, falls back to the full redraw.
+let mdDragging = false;
+function fastUpdate(id, traces) {
+  const el = document.getElementById(id);
+  if (!el || !el.data || !el._fullLayout || el.data.length !== traces.length) return false;
+  const xa = el._fullLayout.xaxis, ya = el._fullLayout.yaxis;
+  if (!xa || !xa.range || !ya || !ya.range || el._fullLayout.grid) return false;
+  const lo = Math.min(...ya.range), hi = Math.max(...ya.range), idx = [], data = [];
+  for (let i = 0; i < traces.length; i++) {
+    const t = traces[i], d = el.data[i];
+    if ((t.type || "scatter") !== "scatter" || (d.type || "scatter") !== "scatter" || t.mode !== d.mode || !t.y || !d.y || t.y.length !== d.y.length) return false;
+    let same = true;
+    for (let j = 0; j < t.y.length; j++) { const v = t.y[j]; if (v !== d.y[j]) same = false; if (v != null && Number.isFinite(v) && (v < lo || v > hi)) return false; }
+    if (!same) { idx.push(i); data.push({y: t.y}); }
+  }
+  if (idx.length) Plotly.animate(el, {data, traces: idx}, {transition: {duration: 0}, frame: {duration: 0, redraw: false}});
+  return true;
+}
+function plot(id, traces, layout, cfg) { if (mdDragging && fastUpdate(id, traces)) return; Plotly.react(id, traces, base(layout), cfg || CFG); }
 function openOnClick(id) { document.getElementById(id).on("plotly_click", e => { const u = e.points[0]?.customdata?.url; if (typeof u === "string" && u.startsWith("http")) window.open(u, "_blank"); }); }
 const axis = extra => Object.assign({gridcolor: css("--grid"), zeroline: false, linecolor: css("--line"), tickfont: {color: css("--text-2")}}, extra);
 
@@ -725,10 +745,12 @@ function mdBuildSide() {
   $("#mdSliders").dataset.built = "1";
   // wiring
   const upd = () => { mdReadSide(); mdUpdate(); };
+  let raf = 0, dragTimer = null;
+  const drag = () => { clearTimeout(dragTimer); dragTimer = setTimeout(upd, 200); if (!raf) raf = requestAnimationFrame(() => { raf = 0; mdReadSide(); mdUpdate(true); }); };
   document.querySelectorAll("input[name=mdRule]").forEach(r => r.addEventListener("change", upd));
   ["#mdRpath", "#mdA_rs", "#mdL_ppp"].forEach(s => $(s).addEventListener("change", upd));
   for (const box of ["#mdRuleParams", "#mdLrParams", "#mdAssume", "#mdSliders"]) {
-    $(box).addEventListener("input", e => { const r = e.target.closest(".sl"); if (!r || e.target.type !== "range") return; r.querySelector("input[type=number]").value = +(+e.target.value).toPrecision(6); mdReadSide(); mdUpdate(true); });
+    $(box).addEventListener("input", e => { const r = e.target.closest(".sl"); if (!r || e.target.type !== "range") return; r.querySelector("input[type=number]").value = +(+e.target.value).toPrecision(6); drag(); });
     $(box).addEventListener("change", e => { if (e.target.type !== "number") return; const r = e.target.closest(".sl"); if (r) r.querySelector("input[type=range]").value = e.target.value; upd(); });
   }
   $("#mdReset").addEventListener("click", () => { mdState = mdDefaults(); mdWriteSide(); mdUpdate(); });
@@ -764,21 +786,55 @@ function mdWriteSide() {
 
 // ---- forecast charts, annual table, shock charts (everything that re-simulates)
 const MD_REPS = 500;
-let mdBands = null, mdBandsKey = "", mdBandTimer = null;
-function mdUpdate(deferBands) {
-  const E = MD.estimates, SM = MD.simulation, P = mdEffective(), inp = mdInputs(), A = mdAssume();
+// The three stochastic simulations (bootstrap bands, the loss table, the coefficient-uncertainty bands of the shock
+// responses) run in web workers built from the inlined modelsim.js, so a slider drag never waits for them.  Each worker
+// keeps only the latest request, and a result for a setting that is no longer current is dropped.  Without workers the
+// simulations run inline as before.
+let mdWorkerSrc;
+const mdWorkerUrl = () => { if (mdWorkerSrc === undefined) { const el = document.getElementById("modelsimSrc"); mdWorkerSrc = el && window.Worker && window.Blob && window.URL ? URL.createObjectURL(new Blob([el.textContent, "\nself.onmessage = e => { const j = e.data; try { self.postMessage({key: j.key, out: modelSim[j.fn](...j.args)}); } catch (err) { self.postMessage({key: j.key, error: String(err)}); } };"], {type: "text/javascript"})) : null; } return mdWorkerSrc; };
+const mdWorkers = {};
+function mdAsync(name, fn, args, key, done) {
+  let w = mdWorkers[name];
+  if (!w) {
+    w = mdWorkers[name] = {worker: null, busy: false, next: null, last: null, key: "", done: null};
+    try { const u = mdWorkerUrl(); if (u) w.worker = new Worker(u); } catch (e) { w.worker = null; }
+    if (w.worker) {
+      w.worker.onmessage = e => { w.busy = false; const r = e.data; if (r.error) console.warn(name, r.error); else if (r.key === w.key) w.done(r.out); if (w.next) { const j = w.next; w.next = null; w.busy = true; w.worker.postMessage(j); } };
+      w.worker.onerror = e => { console.warn("simulation worker failed, computing inline:", e.message); w.worker.terminate(); w.worker = null; w.busy = false; w.next = null; const j = w.last; if (j && j.key === w.key) w.done(modelSim[j.fn](...j.args)); };
+    }
+  }
+  w.key = key; w.done = done; const j = {fn, args, key}; w.last = j;
+  if (!w.worker) { done(modelSim[fn](...args)); return; }
+  if (w.busy) w.next = j; else { w.busy = true; w.worker.postMessage(j); }
+}
+const mdPane = () => (document.querySelector("section.pane.active") || {}).id;
+let mdBands = null, mdBandsKey = "", mdFc = null;
+// dragging = a slider is moving: only the visible pane's deterministic charts are redrawn, and the stochastic parts wait
+// for the full update that follows the drag
+function mdUpdate(dragging) {
+  mdDragging = !!dragging;
+  try { mdUpdateInner(dragging); } finally { mdDragging = false; }
+}
+function mdUpdateInner(dragging) {
+  const SM = MD.simulation, P = mdEffective(), inp = mdInputs(), A = mdAssume();
   const f = modelSim.forecast(inp, P, A, 16, mdState.rule);
-  const isDef = mdIsDefault();
+  mdFc = {f, isDef: mdIsDefault(), ruleName: {exo: "model, Norges Bank's rate path", flx: "model, FLX rule", sm: "model, SM rule", est: "model, estimated reaction function"}[mdState.rule]};
   const bkey = JSON.stringify([P, A, inp.R_path, mdState.rule]);
   if (bkey !== mdBandsKey) {
-    clearTimeout(mdBandTimer);
-    const run = () => { mdBands = modelSim.bootstrap(inp, P, A, 16, mdState.rule, SM.bands.resid_matrix, MD_REPS, 20261031).bands; mdBandsKey = bkey; };
-    if (deferBands) { mdBands = null; mdBandTimer = setTimeout(() => { run(); mdUpdate(); }, 150); } else run();
+    mdBands = null; mdBandsKey = "";
+    if (!dragging) mdAsync("bands", "bootstrap", [inp, P, A, 16, mdState.rule, SM.bands.resid_matrix, MD_REPS, 20261031], bkey, r => { mdBands = r.bands; mdBandsKey = bkey; mdFcDraw(); });
   }
+  const pane = mdPane();
+  if (!dragging || pane === "pane-forecast") { mdFcDraw(); mdAnnual(f); }
+  mdMultBands(P, inp, A, dragging);
+  mdLoss(P, inp, A, dragging);
+  if (!dragging || pane === "pane-policy") { mdShock(P, inp, A); mdUstar(P); }
+}
+function mdFcDraw() {
+  const E = MD.estimates, SM = MD.simulation, {f, isDef, ruleName} = mdFc;
   const H = SM.history, hi = H.index.findIndex(q => q >= "2016Q1"), hx = H.index.slice(hi).map(mdX), fx = f.index.map(mdX);
   const nb = SM.norges_bank.variables, nbq = k => (nb[k] || []).filter(x => x.status === "projection");
   const ragged = SM.ragged, rx = ragged.index.map(mdX);
-  const ruleName = {exo: "model, Norges Bank's rate path", flx: "model, FLX rule", sm: "model, SM rule", est: "model, estimated reaction function"}[mdState.rule];
   const panels = [["infl4", "cpi_inflation", "infl4"], ["infl4u", "cpi_ate_inflation", "infl4u"], ["u", "unemployment_registered", "u"], ["g4y", "mainland_gdp_growth", "g4y"], ["i44", "i44", null], ["R", "policy_rate", "R"]];
   for (const [key, nbKey, bandKey] of panels) {
     const tr = [];
@@ -799,34 +855,35 @@ function mdUpdate(deferBands) {
   }
   $("#mdFcNote").innerHTML = `<span style="color:var(--text-2)">— actual &nbsp; ◆ observed since the origin &nbsp; <b style="color:var(--s1)">—</b> ${esc(ruleName)} &nbsp; <span style="color:var(--s2)">- -</span> Norges Bank MPR 3/26 &nbsp; shaded: 25–75% and 5–95% bootstrap bands</span><br>Bands: ${MD_REPS} bootstrap replications computed in the browser for the setting shown: residual vectors of the eight estimated equations resampled by quarter (keeping their cross-equation correlation) and added to the forecast quarters; 25–75% and 5–95% ranges of the resulting paths. Coefficient uncertainty is not included (NAM2026 reports 90% bands from stochastic simulation).` + (isDef ? "" : " <b>This setting differs from the estimates</b>: the residuals are still those of the estimated equations, so the bands describe the shock uncertainty of this scenario, not of a re-estimated model.")
     + ` Norges Bank's paths are from the MPR 3/26 data file (${esc(SM.norges_bank.published)}); its unemployment is the seasonally adjusted registered rate${E.config.u === "lfs" ? ", a different concept from the LFS rate the model uses here" : ""}. Dotted line: forecast origin.`;
-  mdAnnual(f);
-  mdShock(P, inp, A);
-  mdUstar(P);
-  mdLoss(P, inp, A, deferBands);
-  mdMultBands(P, inp, A, deferBands);
 }
 
 // ---- coefficient-uncertainty bands of the +100 bp responses (exogenous-rate case): Python values at the estimates, browser otherwise
-let mdMB = null, mdMBKey = "", mdMBKey0 = null, mdMBTimer = null;
-function mdMultBands(P, inp, A, defer) {
+let mdMB = null, mdMBKey = "", mdMBKey0 = null;
+function mdMultBands(P, inp, A, dragging) {
   const SM = MD.simulation, key = JSON.stringify([P, A, inp.R_path]);
   if (mdMBKey0 === null && mdIsDefault()) mdMBKey0 = key;
   if (key === mdMBKey) return;
-  clearTimeout(mdMBTimer);
-  const run = () => { if (key === mdMBKey0) mdMB = SM.shock.bands; else { const chol = {}; for (const k of SM.bands.resid_matrix.keys) chol[k] = MD.estimates.equations[k].chol; mdMB = modelSim.multiplierBands(inp, P, A, 48, "exo", chol, SM.shock.bands.reps, SM.shock.bands.seed).bands; } mdMBKey = key; mdShock(mdEffective(), mdInputs(), mdAssume()); };
-  if (defer) { mdMB = null; mdMBTimer = setTimeout(run, 300); } else run();
+  mdMB = null; mdMBKey = "";
+  if (dragging) return;
+  if (key === mdMBKey0) { mdMB = SM.shock.bands; mdMBKey = key; return; }
+  const chol = {}; for (const k of SM.bands.resid_matrix.keys) chol[k] = MD.estimates.equations[k].chol;
+  mdAsync("mb", "multiplierBands", [inp, P, A, 48, "exo", chol, SM.shock.bands.reps, SM.shock.bands.seed], key, r => { mdMB = r.bands; mdMBKey = key; mdShock(mdEffective(), mdInputs(), mdAssume()); });
 }
 
 // ---- ABE2005 loss table: Python values at the estimates, recomputed in the browser for any other setting
-let mdLossKey = "", mdLossKey0 = null, mdLossRes = null, mdLossTimer = null;
+let mdLossKey = "", mdLossKey0 = null, mdLossRes = null;
 const MD_RULE_NAMES = {exo: "Norges Bank's path (exogenous rate)", flx: "FLX rule", sm: "SM smoothing rule", est: "Estimated reaction function"};
-function mdLoss(P, inp, A, defer) {
+function mdLoss(P, inp, A, dragging) {
   const SM = MD.simulation, key = JSON.stringify([P, A, inp.R_path]);
   if (mdLossKey0 === null && mdIsDefault()) mdLossKey0 = key;
-  if (key === mdLossKey) { mdLossRender(); return; }
-  clearTimeout(mdLossTimer);
-  const run = () => { mdLossRes = key === mdLossKey0 ? SM.loss.rules : modelSim.lossSim(inp, P, A, SM.loss.h, ["exo", "flx", "sm", "est"], SM.bands.resid_matrix, MD_REPS, SM.loss.seed); mdLossKey = key; mdLossRender(); };
-  if (defer) { mdLossRes = null; mdLossRender(); mdLossTimer = setTimeout(run, 250); } else run();
+  const hadRes = mdLossRes !== null;
+  if (key !== mdLossKey) {
+    mdLossRes = null; mdLossKey = "";
+    if (key === mdLossKey0) { mdLossRes = SM.loss.rules; mdLossKey = key; }
+    else if (!dragging) mdAsync("loss", "lossSim", [inp, P, A, SM.loss.h, ["exo", "flx", "sm", "est"], SM.bands.resid_matrix, MD_REPS, SM.loss.seed], key, r => { mdLossRes = r; mdLossKey = key; mdLossRender(); });
+  }
+  // while dragging, the table is only switched to "recomputing" once; the full update after the drag renders it again
+  if (!dragging || (hadRes && mdLossRes === null && mdPane() === "pane-policy")) mdLossRender();
 }
 function mdLossRender() {
   const SM = MD.simulation, lam = +$("#mdLossLam").value || 0, kap = +$("#mdLossKap").value || 0, R = mdLossRes, kinds = ["exo", "flx", "sm", "est"], tgt = mdState.P.rule.pi_bar;

@@ -39,9 +39,11 @@ def ols(y, X):
 
 def design(d: pd.DataFrame, eq: dict, est_eq: dict, end: str, with_dummies: bool):
     """y vector and regressor frame (constant first) of an equation as estimated, optionally without the impulse dummies."""
-    y = eq["lhs"]; X = [c["name"] for c in est_eq["coef"] if c["name"] != "const" and (with_dummies or c["kind"] != "dummy")]
-    df = d.loc[eq["start"]:end, [y] + X].dropna()
-    return df[y], sm.add_constant(df[X], has_constant="add"), df.index
+    y = eq["lhs"]; X = [c["name"] for c in est_eq["coef"] if c["name"] != "const" and c["kind"] != "imposed" and (with_dummies or c["kind"] != "dummy")]
+    imposed = [(c["name"], c["est"]) for c in est_eq["coef"] if c["kind"] == "imposed"]
+    df = d.loc[eq["start"]:end, [y] + X + [c for c, _ in imposed]].dropna()
+    yv = df[y] - sum(val * df[c] for c, val in imposed)       # imposed coefficients (estimate.fit_equation) come out of the regressand
+    return yv, sm.add_constant(df[X], has_constant="add"), df.index
 
 # ----------------------------------------------------------------------------------------------- 1. IIS / SIS
 

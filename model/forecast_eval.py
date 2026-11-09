@@ -54,7 +54,10 @@ def fit_at(d: pd.DataFrame, eq: dict, end: str, drop: list[str]) -> tuple[dict, 
     """Coefficients of one equation estimated on eq.start..end with the columns in `drop` removed; the same impulse-dummy
     rule as estimate.fit_equation (candidates with |t| >= 2 kept), skipping dummies that are all zero in the sample."""
     y = eq["lhs"]; base = [c for c, _, _ in eq["regs"] if c not in drop] + eq["seasonals"]
-    df = d.loc[eq["start"]:end, [y] + base + eq["candidates"]].dropna(subset=[y] + base)
+    imposed = [(c, val) for c, _, val, _ in eq.get("imposed", []) if c not in drop]; icols = [c for c, _ in imposed]
+    df = d.loc[eq["start"]:end, [y] + base + icols + eq["candidates"]].dropna(subset=[y] + base + icols)
+    if imposed:                                   # imposed coefficients (estimate.fit_equation) come out of the regressand
+        df[y] = df[y] - sum(val * df[c] for c, val in imposed)
     cands = [c for c in eq["candidates"] if df[c].abs().sum() > 0]
     keep = []
     if cands:
@@ -62,6 +65,7 @@ def fit_at(d: pd.DataFrame, eq: dict, end: str, drop: list[str]) -> tuple[dict, 
         keep = [c for c in cands if abs(float(m0.tvalues[c])) >= 2]
     X = base + keep; m = ols(df, y, X)
     co = {c: float(m.params[c]) for c in ["const"] + X}
+    for c, val in imposed: co[c] = float(val)
     for c in drop: co[c] = 0.0
     return co, float(m.resid.iloc[-1])
 

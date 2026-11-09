@@ -635,7 +635,7 @@ const mdSig = (x, d = 3) => (x == null ? "–" : Math.abs(x) >= 100 ? (+x).toFix
 const mdForm = t => esc(t).replace(/EqCM_([a-z]+),t−(\d)/g, "EqCM<sub>$1,t−$2</sub>").replace(/_\{([^}]+)\}/g, "<sub>$1</sub>").replace(/_t\b/g, "<sub>t</sub>").replace(/_(pi|w|p|v|u|y)\b/g, "<sub>$1</sub>");
 const MD_SLIDER_EQS = ["wage", "price", "imp", "fx", "fx_level", "unemp", "output", "mm", "bridge", "rule_est"];
 const MD_LR_DEF = {gamma_u: 0.1, phi: 0.4, y_g: 0.9, y_rex: 0.16, y_rr: 0.06};
-const MD_NAMES = {wage: "Wages", price: "Consumer prices", imp: "Import prices", fx: "Exchange rate", fx_level: "Exchange rate (PPP version)", unemp: "Unemployment", output: "Mainland GDP", mm: "Money-market rate", bridge: "CPI-ATE bridge", rule_est: "Reaction function"};
+const MD_NAMES = {wage: "Wages", price: "Consumer prices", imp: "Import prices", fx: "Exchange rate", fx_level: "Exchange rate (free α_v)", unemp: "Unemployment", output: "Mainland GDP", mm: "Money-market rate", bridge: "CPI-ATE bridge", rule_est: "Reaction function"};
 const MD_RULE_LAB = {theta_pi: "θ_pi", theta_y: "θ_y", rho: "ρ", rr_bar: "r̄r", pi_bar: "π̄", g_bar: "ḡ"}, MD_LR_LAB = {gamma_u: "γ_u", phi: "ϕ", y_g: "output: g", y_rex: "output: rex", y_rr: "output: rr", use_alpha_v: "PPP anchor"};
 let mdPicked = "wage";
 function mdPick(g) {
@@ -647,9 +647,9 @@ function mdPick(g) {
 function mdChangedList() {
   const E = MD.estimates, SM = MD.simulation, P = mdState.P, out = [];
   for (const k in P.rule) if (k !== "kind" && Math.abs(P.rule[k] - SM.params.rule[k]) > 1e-9) out.push({g: "rule", kind: "rule", a: k, text: `${MD_RULE_LAB[k] || k} ${mdSig(P.rule[k])}`});
-  for (const k in P.lr) if (k in MD_LR_LAB && (k === "use_alpha_v" ? !!P.lr[k] !== !!SM.params.lr[k] : Math.abs(P.lr[k] - SM.params.lr[k]) > 1e-9)) out.push({g: "lr", kind: "lr", a: k, text: k === "use_alpha_v" ? "PPP anchor on" : `${MD_LR_LAB[k]} ${mdSig(P.lr[k])}`});
+  for (const k in P.lr) if (k in MD_LR_LAB && (k === "use_alpha_v" ? !!P.lr[k] !== !!SM.params.lr[k] : Math.abs(P.lr[k] - SM.params.lr[k]) > 1e-9)) out.push({g: "lr", kind: "lr", a: k, text: k === "use_alpha_v" ? "free α_v in the exchange rate" : `${MD_LR_LAB[k]} ${mdSig(P.lr[k])}`});
   for (const k of MD_SLIDER_EQS) { const eq = E.equations[k]; if (!eq) continue;
-    for (const c of eq.coef) if (c.kind === "reg" && Math.abs(P.eq[k][c.name] - c.est) > 1e-9) out.push({g: k, kind: "eq", a: k, b: c.name, text: `${MD_NAMES[k]}: ${c.label.split(" = ")[0]} ${mdSig(P.eq[k][c.name])} (est ${mdSig(c.est)})`}); }
+    for (const c of eq.coef) if ((c.kind === "reg" || c.kind === "imposed") && Math.abs(P.eq[k][c.name] - c.est) > 1e-9) out.push({g: k, kind: "eq", a: k, b: c.name, text: `${MD_NAMES[k]}: ${c.label.split(" = ")[0]} ${mdSig(P.eq[k][c.name])} (est ${mdSig(c.est)})`}); }
   return out;
 }
 function mdResetOne(kind, a, b) {
@@ -662,7 +662,7 @@ function mdSideRefresh() {
   document.querySelectorAll("#mdEqPick button").forEach(b => { const n = per[b.dataset.g] || 0; b.classList.toggle("has", n > 0); b.querySelector(".bd").textContent = n; });
   $("#mdChanged").innerHTML = ch.length ? `<span>Changed:</span>` + ch.map(x => `<button type="button" data-kind="${x.kind}" data-a="${x.a}" data-b="${x.b || ""}" title="reset this one">${mdForm(x.text)} ×</button>`).join("") : `<span>All coefficients at their estimates.</span>`;
   for (const k of MD_SLIDER_EQS) { const eq = E.equations[k], el = document.getElementById("mdLine_" + k); if (!eq || !el) continue;
-    const terms = eq.coef.filter(c => c.kind === "reg").map((c, i) => { const x = P.eq[k][c.name], chg = Math.abs(x - c.est) > 1e-9; return `${i === 0 ? (x < 0 ? "−" : "") : x < 0 ? " − " : " + "}<b class="${chg ? "chg" : ""}">${mdSig(Math.abs(x))}</b>·${mdForm(c.label.split(" = ")[0])}`; });
+    const terms = eq.coef.filter(c => c.kind === "reg" || c.kind === "imposed").map((c, i) => { const x = P.eq[k][c.name], chg = Math.abs(x - c.est) > 1e-9; return `${i === 0 ? (x < 0 ? "−" : "") : x < 0 ? " − " : " + "}<b class="${chg ? "chg" : ""}">${mdSig(Math.abs(x))}</b>·${mdForm(c.label.split(" = ")[0])}`; });
     const extra = eq.coef.filter(c => c.kind === "dummy").length, seas = eq.coef.some(c => c.kind === "seasonal");
     el.innerHTML = `${mdForm(eq.lhs_label.split(" (")[0])}<sub>t</sub> = c + ${terms.join("")}${seas ? " + seasonals" : ""}${extra ? ` + ${extra} impulse ${extra > 1 ? "dummies" : "dummy"}` : ""}`;
   }
@@ -737,18 +737,18 @@ function mdBuildSide() {
   const means = E.longrun.means;
   $("#mdLrParams").innerHTML = numRow("mdL_gamma_u", "γ<sub>u</sub> wage curve (BJN 0.1; NAM2026 0.12)", P.lr.gamma_u, 0.01, 0, 0.5) + numRow("mdL_phi", "ϕ import-price weight in CPI (BJN 0.4)", P.lr.phi, 0.01, 0, 1)
     + numRow("mdL_y_g", "output: weight on g (BN2008 0.9)", P.lr.y_g, 0.01, 0, 1.5) + numRow("mdL_y_rex", "output: real exchange rate (0.16)", P.lr.y_rex, 0.01, 0, 0.5) + numRow("mdL_y_rr", "output: real rate (0.06)", P.lr.y_rr, 0.005, 0, 0.2)
-    + `<label style="margin-top:6px"><input type="checkbox" id="mdL_ppp"> PPP anchor in the exchange rate (BN2008 eq 36, α<sub>v</sub> = ${mdN(E.longrun.fx.alpha_v, 4)}, t ${mdN(E.longrun.fx.alpha_v_t, 1)})</label>`;
+    + `<label style="margin-top:6px"><input type="checkbox" id="mdL_ppp"> Exchange rate: estimate the adjustment to PPP freely (α<sub>v</sub> = ${mdN(E.longrun.fx.alpha_v, 4)}, t ${mdN(E.longrun.fx.alpha_v_t, 1)}) instead of BN2008's imposed ${mdN(E.longrun.fx.imposed, 3)}</label>`;
   const A = SM.assumptions;
   $("#mdAssume").innerHTML = numRow("mdA_z_growth", "productivity z, four-quarter growth %", A.z_growth, 0.1, -2, 5) + numRow("mdA_g_growth", "public consumption g, growth %", A.g_growth, 0.1, -2, 5)
     + numRow("mdA_pf_infl", "foreign producer prices pf, %", A.pf_infl, 0.1, -4, 8) + numRow("mdA_pstar_infl", "foreign consumer prices p*, %", A.pstar_infl, 0.1, -2, 8) + numRow("mdA_pen_infl", "energy prices pe, %", A.pen_infl, 0.5, -15, 15)
     + `<div class="kv"><span>foreign short rate R*</span><select id="mdA_rs" class="num" style="width:auto"><option value="nb">Norges Bank's trading-partner path</option><option value="const">constant</option></select></div>`
-    + `<div class="note">${esc(A.labels.Rs_path)}. ${esc(A.labels.oil)}; ${esc(A.labels.t1_t3)}; ${esc(A.labels.ytrend)}. Defaults for z and g are their average growth over the last ten years.</div>`;
+    + `<div class="note">Exchange rate: pulled towards purchasing-power parity adjusted for the real interest differential at ${mdN(-100 * E.longrun.fx.imposed, 1)} % of the gap a quarter, the BN2008 eq 36 coefficient imposed because it is insignificant on this sample (see the Policy tab's "free α_v" switch); the level it returns to is the sample average of that relation. ${esc(A.labels.Rs_path)}. ${esc(A.labels.oil)}; ${esc(A.labels.t1_t3)}; ${esc(A.labels.ytrend)}. Defaults for z and g are their average growth over the last ten years.</div>`;
   // short-run sliders, one group per equation
   const names = MD_NAMES, eqKeys = MD_SLIDER_EQS.filter(k => E.equations[k]);
   $("#mdSliders").innerHTML = eqKeys.map(k => {
-    const eq = E.equations[k], rows = eq.coef.filter(c => c.kind === "reg").map(c => {
+    const eq = E.equations[k], rows = eq.coef.filter(c => c.kind === "reg" || c.kind === "imposed").map(c => {
       const span = Math.max(4 * c.se, Math.abs(c.est) * 0.75, 1e-4), lo = c.est - span, hi = c.est + span, step = span / 100;
-      return `<div class="sl" data-eq="${k}" data-c="${esc(c.name)}"><div class="lab"><span>${mdForm(c.label.split(" = ")[0])} <span class="pub">(se ${mdSig(c.se)})</span></span><span class="pub" title="${esc(c.published ? c.published[1] : "")}">${c.published ? "published " + esc(c.published[0].split(" (")[0]) : ""}</span></div>
+      return `<div class="sl" data-eq="${k}" data-c="${esc(c.name)}"><div class="lab"><span>${mdForm(c.label.split(" = ")[0])} <span class="pub">${c.kind === "imposed" ? "(imposed)" : `(se ${mdSig(c.se)})`}</span></span><span class="pub" title="${esc(c.published ? c.published[1] : "")}">${c.published ? "published " + esc(c.published[0].split(" (")[0]) : ""}</span></div>
         <input type="range" min="${lo.toFixed(6)}" max="${hi.toFixed(6)}" step="${step.toFixed(7)}" value="${c.est}"><input type="number" class="num val" step="any" value="${+c.est.toPrecision(6)}"></div>`;
     }).join("");
     return `<div class="eqg" data-g="${k}" hidden><div class="eqgh">${esc(eq.label)} <small>${esc(eq.lhs_label)}</small></div><div class="eqline" id="mdLine_${k}"></div>${rows}</div>`;
@@ -1061,7 +1061,7 @@ function mdEquations() {
   const testChip = t => `<span class="${t.p < 0.01 ? "bad" : t.p < 0.05 ? "warn" : ""}" title="${esc(t.label)}">${esc(t.label.split(" ")[0] + (t.label.includes("ARCH") ? " 1–4" : t.label.includes("AR") ? " 1–5" : ""))} ${mdN(t.stat, 2)} [${mdN(t.p, 3)}]</span>`;
   $("#mdEqs").innerHTML = order.filter(k => E.equations[k]).map(k => {
     const eq = E.equations[k], t = eq.tests;
-    const rows = eq.coef.filter(c => c.kind !== "seasonal").map(c => `<tr><td>${mdForm(c.label)}${c.kind === "dummy" ? ' <span class="note" style="display:inline">(impulse dummy)</span>' : ""}</td><td class="num">${mdSig(c.est, 4)}</td><td class="num">${mdSig(c.se, 4)}</td><td class="num">${mdN(c.t, 1)}</td><td class="pubv">${c.published ? esc(c.published[0]) + '<br><span style="font-size:.72rem">' + esc(c.published[1]) + "</span>" : ""}</td></tr>`).join("");
+    const rows = eq.coef.filter(c => c.kind !== "seasonal").map(c => `<tr><td>${mdForm(c.label)}${c.kind === "dummy" ? ' <span class="note" style="display:inline">(impulse dummy)</span>' : ""}</td><td class="num">${mdSig(c.est, 4)}</td>${c.kind === "imposed" ? '<td class="num" colspan="2"><span class="note" style="display:inline">imposed</span></td>' : `<td class="num">${mdSig(c.se, 4)}</td><td class="num">${mdN(c.t, 1)}</td>`}<td class="pubv">${c.published ? esc(c.published[0]) + '<br><span style="font-size:.72rem">' + esc(c.published[1]) + "</span>" : ""}</td></tr>`).join("");
     const seas = eq.coef.filter(c => c.kind === "seasonal");
     const alts = Object.values(E.alternatives).filter(a => a.key === k);
     const altRows = alts.map(a => { const ecm = a.coef.find(c => c.name.startsWith("ecm") || c.name === "u_l2" || c.name === "RS_l1"); return `<tr><td>${esc(a.alt_label)}</td><td>${esc(a.sample[0])}–${esc(a.sample[1])}</td><td class="num">${a.T}</td><td class="num">${mdSig(a.sigma, 4)}</td><td class="num">${ecm ? mdSig(ecm.est, 3) + " (" + mdN(ecm.t, 1) + ")" : "–"}</td><td class="num">${a.tests.ar15 ? mdN(a.tests.ar15.p, 2) : "–"}</td><td class="num">${mdN(a.tests.norm.p, 2)}</td></tr>`; }).join("");

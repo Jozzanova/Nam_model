@@ -51,10 +51,11 @@ const modelSim = (() => {
           c = eq.rule_est;
           R[t] = R[t - 1] + c.const + c.R_l1 * R[t - 1] + c.pigap_u * (infl4u(t) - X.tgt[t]) + c.g4y * g4y(t) + c.u_l1 * u[t - 1] + c.DRs * (X.Rs[t] - X.Rs[t - 1]) + c.DR_l1 * (R[t - 1] - R[t - 2]) + (shock ? shock[t] : 0) + r("rule_est", t);
         }
+        // fx imposes BN2008's alpha_v = -0.042 on the level term; fx_level (the "free alpha_v" switch) estimates it
         c = lr.use_alpha_v ? eq.fx_level : eq.fx;
         const dRd = X.d_it[t] * ((R[t] - X.Rs[t]) - (R[t - 1] - X.Rs[t - 1]));
         v[t] = v[t - 1] + c.const + c.dRdiff_it * dRd + c.Doil * (X.oil[t] - X.oil[t - 1]) + c.Dv_l1 * (v[t - 1] - v[t - 2])
-          + (lr.use_alpha_v ? c.ecm_v_l1 * ecm_v(t - 1) : 0) + dum(c, t) + r(lr.use_alpha_v ? "fx_level" : "fx", t);
+          + (c.ecm_v_l1 || 0) * ecm_v(t - 1) + dum(c, t) + r(lr.use_alpha_v ? "fx_level" : "fx", t);
         c = eq.imp;
         pi[t] = pi[t - 1] + c.const + c.Dv * (v[t] - v[t - 1]) + c.Dpf * (X.pf[t] - X.pf[t - 1]) + c.Dv_l1 * (v[t - 1] - v[t - 2])
           + c.Dpi14 * ((pi[t - 1] - pi[t - 2]) - (pi[t - 4] - pi[t - 5])) + c.ecm_pi_l1 * ecm_pi(t - 1) + c.rex_l1 * rex(t - 1) + sea(c, t) + r("imp", t);

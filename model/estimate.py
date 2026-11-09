@@ -141,16 +141,15 @@ def equations(d: pd.DataFrame, cfg: dict) -> list[dict]:
                    (Lg("rex", 1), "rex_{t−1} = (v + p* − p)_{t−1}", ("κ = 0.55 (as −α_pi·κ)", "BN2008 eq 48; NAM2026: −0.068 and −0.049"))],
              seasonals=S, candidates=[], start=cfg["start"]),
         dict(key="fx", label="Exchange rate", lhs="Dv", lhs_label="Δv (quarterly change of log I-44; up = weaker krone)",
-             form="Δv_t = c + e₁ IT·Δ(R − R*)_t + e₂Δoil_t + e₃Δv_{t−1} − 0.042[(v + p* − p) − 0.12((R − π) − (R* − π*))]_{t−1}",
-             published_form="BN2008 eq 36: interest differential (IT-interacted), oil, Δv_{t−1} and the PPP/real-interest-differential equilibrium correction, with both the long-run coefficient 0.12 (eq 47) and the adjustment coefficient −0.042 imposed from the paper, since the latter is insignificant with the wrong sign on this sample (see the free version below). NAM2026 Table 5.44 has no level term.",
+             form="Δv_t = c + e₁ IT·Δ(R − R*)_t + e₂Δoil_t + e₃Δv_{t−1}",
+             published_form="NAM2026 Table 5.44 form (no level term): interest differential as in BN2008 eq 36 (IT-interacted), oil, Δv_{t−1}. The BN2008 version with the PPP/real-rate level term is estimated separately below.",
              regs=[("dRdiff_it", "IT·Δ(R − R*)_t", ("−0.0361 (0.0069)", "BN2008 eq 36; NAM2026: −0.045 on Δ(RS − RS*)")),
                    ("Doil", "Δoil_t", ("−0.036 on Δ²oil_{t−1}", "BN2008 eq 36; NAM2026: −0.088 on Δoil_t")),
                    (Lg("Dv", 1), "Δv_{t−1}", ("−0.286 (t −4.6)", "NAM2026 Table 5.44"))],
-             imposed=[(Lg("ecm_v", 1), "EqCM_v,t−1 = [(v + p* − p) − 0.12((R − π) − (R* − π*))]_{t−1}", -0.042, ("−0.042 (0.012)", "BN2008 eq 36, imposed; the free estimate on this sample is in the next equation"))],
              seasonals=[], candidates=COVID, start=cfg["start"]),
-        dict(key="fx_level", label="Exchange rate with the level term estimated freely", lhs="Dv", lhs_label="Δv (quarterly change of log I-44; up = weaker krone)",
+        dict(key="fx_level", label="Exchange rate with the BN2008 level term", lhs="Dv", lhs_label="Δv (quarterly change of log I-44; up = weaker krone)",
              form="Δv_t = c + e₁ IT·Δ(R − R*)_t + e₂Δoil_t + e₃Δv_{t−1} − α_v[(v + p* − p) − 0.12((R − π) − (R* − π*))]_{t−1}",
-             published_form="BN2008 eq 36 with the adjustment coefficient α_v estimated instead of imposed (0.12 from eq 47 still imposed inside the term). Used in the simulation only when the 'free α_v' switch is on.",
+             published_form="BN2008 eq 36: PPP/real-interest-differential level term with 0.12 imposed from eq 47. Used in the simulation only when the 'PPP anchor' switch is on.",
              regs=[("dRdiff_it", "IT·Δ(R − R*)_t", ("−0.0361 (0.0069)", "BN2008 eq 36")),
                    ("Doil", "Δoil_t", ("−0.036 on Δ²oil_{t−1}", "BN2008 eq 36")),
                    (Lg("Dv", 1), "Δv_{t−1}", None),
@@ -249,36 +248,27 @@ def diagnostics(m, df: pd.DataFrame, X: list[str]) -> dict:
 
 def fit_equation(d: pd.DataFrame, eq: dict, end: str, exclude_covid: bool, split_date: str = "2001Q2") -> dict:
     y = eq["lhs"]; base = [c for c, _, _ in eq["regs"]] + eq["seasonals"]
-    imposed = eq.get("imposed", [])          # [(column, label, value, published)]: coefficient fixed, taken out of the regressand
-    icols = [c for c, _, _, _ in imposed]
-    df = d.loc[eq["start"]:end, [y] + base + icols + eq["candidates"]].dropna(subset=[y] + base + icols)
+    df = d.loc[eq["start"]:end, [y] + base + eq["candidates"]].dropna(subset=[y] + base)
     if exclude_covid:
         df = df[~df.index.isin(pd.period_range("2020Q1", "2021Q4", freq="Q"))]
-    ystar = y + "_star" if imposed else y
-    if imposed:
-        df[ystar] = df[y] - sum(val * df[c] for c, _, val, _ in imposed)
     tried = {}; keep = []
     if eq["candidates"] and not exclude_covid:
-        m0 = ols(df, ystar, base + eq["candidates"])
+        m0 = ols(df, y, base + eq["candidates"])
         for c in eq["candidates"]:
             tv = float(m0.tvalues[c]); tried[c] = round(tv, 2)
             if abs(tv) >= 2: keep.append(c)
     X = base + keep
-    m = ols(df, ystar, X)
+    m = ols(df, y, X)
     labels = {c: lab for c, lab, _ in eq["regs"]}; pub = {c: p for c, _, p in eq["regs"]}
     coef = []
     for c in ["const"] + X:
         coef.append({"name": c, "label": labels.get(c, {"const": "constant"}.get(c, c)), "est": float(m.params[c]), "se": float(m.bse[c]), "mean": float(df[c].mean()) if c != "const" else 1.0,
                      "t": float(m.tvalues[c]), "p": float(m.pvalues[c]), "published": pub.get(c), "kind": "seasonal" if c in eq["seasonals"] else "dummy" if c in keep else "const" if c == "const" else "reg"})
-    for c, lab, val, p in imposed:
-        coef.append({"name": c, "label": lab, "est": float(val), "se": 0.0, "mean": float(df[c].mean()), "t": None, "p": None, "published": p, "kind": "imposed"})
-    fitted = m.fittedvalues + (df[y] - df[ystar])          # fit of the full equation, imposed part included
-    ssr = float((m.resid ** 2).sum()); sst = float(((df[y] - df[y].mean()) ** 2).sum()); r2 = 1 - ssr / sst if sst else float("nan")
     res = {"key": eq["key"], "label": eq["label"], "lhs": y, "lhs_label": eq["lhs_label"], "form": eq["form"], "published_form": eq["published_form"],
-           "sample": [str(df.index[0]), str(df.index[-1])], "T": int(m.nobs), "sigma": float(math.sqrt(m.scale)), "r2": r2, "r2adj": 1 - (1 - r2) * (m.nobs - 1) / m.df_resid,
+           "sample": [str(df.index[0]), str(df.index[-1])], "T": int(m.nobs), "sigma": float(math.sqrt(m.scale)), "r2": float(m.rsquared), "r2adj": float(m.rsquared_adj),
            "dw": float(durbin_watson(m.resid)), "coef": coef, "tests": diagnostics(m, df, X), "dummies_tried": tried,
-           "chow_split": chow_split(df, ystar, X, split_date), "recursive": recursive(df, ystar, X),
-           "dates": [str(t) for t in df.index], "actual": [round(float(v), 6) for v in df[y]], "fitted": [round(float(v), 6) for v in fitted],
+           "chow_split": chow_split(df, y, X, split_date), "recursive": recursive(df, y, X),
+           "dates": [str(t) for t in df.index], "actual": [round(float(v), 6) for v in df[y]], "fitted": [round(float(v), 6) for v in m.fittedvalues],
            "resid": [round(float(v), 10) for v in m.resid]}
     cov = np.asarray(m.cov_params()); cov = (cov + cov.T) / 2
     try:
@@ -397,7 +387,7 @@ def main(argv=None):
     imp = results["imp"]; ai = -[c for c in imp["coef"] if c["name"] == "ecm_pi_l1"][0]["est"]; kr = [c for c in imp["coef"] if c["name"] == "rex_l1"][0]
     lr["imp"] = {"alpha": round(ai, 4), "kappa": round(kr["est"] / ai, 3) if ai else None, "kappa_t": round(kr["t"], 2), "imposed": {"v": 1, "pf": 1, "source": "BN2008 eq 48 (κ = 0.55)"}}
     fx = results["fx_level"]; av = [c for c in fx["coef"] if c["name"] == "ecm_v_l1"][0]
-    lr["fx"] = {"alpha_v": round(av["est"], 4), "alpha_v_t": round(av["t"], 2), "imposed": -0.042, "note": "BN2008 eq 36 finds −0.042 (t −3.5) on 1994Q2–2007Q2; NAM2026 Table 5.44 has no level term. The default equation imposes −0.042; the simulation uses the freely estimated coefficient only when the 'free α_v' switch is on."}
+    lr["fx"] = {"alpha_v": round(av["est"], 4), "alpha_v_t": round(av["t"], 2), "note": "BN2008 eq 36 finds −0.042 (t −3.5) on 1994Q2–2007Q2; NAM2026 Table 5.44 has no level term. The simulation uses the equation without the level term unless the 'PPP anchor' switch is on."}
     un = results["unemp"]; au = -[c for c in un["coef"] if c["name"] == "u_l2"][0]["est"]
     g = lambda n: [c for c in un["coef"] if c["name"] == n][0]
     lr["unemp"] = {"alpha": round(au, 4), "theta_wage": round(g("Dwp_l2")["est"] / au, 2), "theta_rr": round(g("rr_l2")["est"] / au, 4), "theta_g4y": round(g("g4y_l2")["est"] / au, 4),

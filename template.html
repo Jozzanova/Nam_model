@@ -603,10 +603,14 @@ function fastUpdate(id, traces) {
     for (let j = 0; j < t.y.length; j++) { const v = t.y[j]; if (v !== d.y[j]) same = false; if (v != null && Number.isFinite(v) && (v < lo || v > hi)) return false; }
     if (!same) { idx.push(i); data.push({y: t.y}); }
   }
-  if (idx.length) Plotly.animate(el, {data, traces: idx}, {transition: {duration: 0}, frame: {duration: 0, redraw: false}});
+  // mode "immediate": a new frame replaces any frame still waiting (the default queues them and plays the backlog after the
+  // drag, one per animation frame); an interrupted call rejects its promise, which is expected here
+  if (idx.length) Plotly.animate(el, {data, traces: idx}, {mode: "immediate", transition: {duration: 0}, frame: {duration: 0, redraw: false}}).catch(() => {});
   return true;
 }
-function plot(id, traces, layout, cfg) { if (mdDragging && fastUpdate(id, traces)) return; Plotly.react(id, traces, base(layout), cfg || CFG); }
+// a frame still waiting from a drag must not run after the full redraw (it would land on whatever trace then has that index)
+function flushAnim(id) { const el = document.getElementById(id); if (el && el._transitionData && el._transitionData._frameQueue && el._transitionData._frameQueue.length) Plotly.animate(el, [], {mode: "immediate"}).catch(() => {}); }
+function plot(id, traces, layout, cfg) { if (mdDragging && fastUpdate(id, traces)) return; flushAnim(id); Plotly.react(id, traces, base(layout), cfg || CFG); }
 function openOnClick(id) { document.getElementById(id).on("plotly_click", e => { const u = e.points[0]?.customdata?.url; if (typeof u === "string" && u.startsWith("http")) window.open(u, "_blank"); }); }
 const axis = extra => Object.assign({gridcolor: css("--grid"), zeroline: false, linecolor: css("--line"), tickfont: {color: css("--text-2")}}, extra);
 

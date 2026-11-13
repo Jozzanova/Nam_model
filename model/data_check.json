@@ -1,21 +1,19 @@
 {
  "new_quarters": {},
- "shortened": {
-  "cpi_sa": [
-   "2026Q3",
-   ""
-  ],
-  "cpi_ate_sa": [
-   "2026Q3",
-   ""
-  ]
+ "shortened": {},
+ "revised": {
+  "cpi_sa": {
+   "cells": 1,
+   "first": "2024Q1",
+   "max_rel": 0.0003460276828583377,
+   "at": "2024Q1"
+  }
  },
- "revised": {},
  "dropped": [],
  "added": [],
  "changed": true,
- "checked": "2026-11-10",
- "fetched": "2026-11-10",
+ "checked": "2026-11-13",
+ "fetched": "2026-11-13",
  "kept_from_cache": [],
  "failures": [],
  "last_quarter": {
@@ -32,12 +30,14 @@
   "ppi_ea": "2026Q3",
   "oil_brent": "2026Q3"
  },
- "summary": "Shortened: cpi_sa (2026Q3 to ), cpi_ate_sa (2026Q3 to )",
+ "summary": "Revisions in consumer prices (Statistics Norway)",
  "last_update": {
-  "date": "2026-11-10",
-  "summary": "Shortened: cpi_sa (2026Q3 to ), cpi_ate_sa (2026Q3 to )",
+  "date": "2026-11-13",
+  "summary": "Revisions in consumer prices (Statistics Norway)",
   "new_quarters": {},
-  "revised": [],
+  "revised": [
+   "cpi_sa"
+  ],
   "last_quarter": {
    "gdp_ml": "2026Q2",
    "cpi": "2026Q3",

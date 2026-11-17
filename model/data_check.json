@@ -1,19 +1,12 @@
 {
  "new_quarters": {},
  "shortened": {},
- "revised": {
-  "cpi_sa": {
-   "cells": 1,
-   "first": "2024Q1",
-   "max_rel": 0.0003460276828583377,
-   "at": "2024Q1"
-  }
- },
+ "revised": {},
  "dropped": [],
  "added": [],
- "changed": true,
- "checked": "2026-11-13",
- "fetched": "2026-11-13",
+ "changed": false,
+ "checked": "2026-11-17",
+ "fetched": "2026-11-17",
  "kept_from_cache": [],
  "failures": [],
  "last_quarter": {
@@ -30,7 +23,7 @@
   "ppi_ea": "2026Q3",
   "oil_brent": "2026Q3"
  },
- "summary": "Revisions in consumer prices (Statistics Norway)",
+ "summary": "No change",
  "last_update": {
   "date": "2026-11-13",
   "summary": "Revisions in consumer prices (Statistics Norway)",
@@ -53,5 +46,5 @@
    "oil_brent": "2026Q3"
   }
  },
- "outcome": "changed"
+ "outcome": "unchanged"
 }

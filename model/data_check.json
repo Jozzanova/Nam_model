@@ -1,12 +1,19 @@
 {
  "new_quarters": {},
  "shortened": {},
- "revised": {},
+ "revised": {
+  "hicp_ea": {
+   "cells": 1,
+   "first": "2026Q3",
+   "max_rel": 3.212633327293117e-05,
+   "at": "2026Q3"
+  }
+ },
  "dropped": [],
  "added": [],
- "changed": false,
- "checked": "2026-11-17",
- "fetched": "2026-11-17",
+ "changed": true,
+ "checked": "2026-11-20",
+ "fetched": "2026-11-20",
  "kept_from_cache": [],
  "failures": [],
  "last_quarter": {
@@ -23,13 +30,13 @@
   "ppi_ea": "2026Q3",
   "oil_brent": "2026Q3"
  },
- "summary": "No change",
+ "summary": "Revisions in euro-area prices and rates (ECB)",
  "last_update": {
-  "date": "2026-11-13",
-  "summary": "Revisions in consumer prices (Statistics Norway)",
+  "date": "2026-11-20",
+  "summary": "Revisions in euro-area prices and rates (ECB)",
   "new_quarters": {},
   "revised": [
-   "cpi_sa"
+   "hicp_ea"
   ],
   "last_quarter": {
    "gdp_ml": "2026Q2",
@@ -46,5 +53,5 @@
    "oil_brent": "2026Q3"
   }
  },
- "outcome": "unchanged"
+ "outcome": "changed"
 }

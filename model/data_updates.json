@@ -63,5 +63,27 @@
    "ppi_ea": "2026Q3",
    "oil_brent": "2026Q3"
   }
+ },
+ {
+  "date": "2026-11-20",
+  "summary": "Revisions in euro-area prices and rates (ECB)",
+  "new_quarters": {},
+  "revised": [
+   "hicp_ea"
+  ],
+  "last_quarter": {
+   "gdp_ml": "2026Q2",
+   "cpi": "2026Q3",
+   "cpi_ate": "2026Q3",
+   "w_hour": "2026Q2",
+   "u_reg": "2026Q2",
+   "pi_defl": "2026Q2",
+   "i44": "2026Q3",
+   "policy_rate": "2026Q3",
+   "nibor3m": "2026Q3",
+   "hicp_ea": "2026Q3",
+   "ppi_ea": "2026Q3",
+   "oil_brent": "2026Q3"
+  }
  }
 ]

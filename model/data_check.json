@@ -1,19 +1,12 @@
 {
  "new_quarters": {},
  "shortened": {},
- "revised": {
-  "hicp_ea": {
-   "cells": 1,
-   "first": "2026Q3",
-   "max_rel": 3.212633327293117e-05,
-   "at": "2026Q3"
-  }
- },
+ "revised": {},
  "dropped": [],
  "added": [],
- "changed": true,
- "checked": "2026-11-20",
- "fetched": "2026-11-20",
+ "changed": false,
+ "checked": "2026-11-24",
+ "fetched": "2026-11-24",
  "kept_from_cache": [],
  "failures": [],
  "last_quarter": {
@@ -30,7 +23,7 @@
   "ppi_ea": "2026Q3",
   "oil_brent": "2026Q3"
  },
- "summary": "Revisions in euro-area prices and rates (ECB)",
+ "summary": "No change",
  "last_update": {
   "date": "2026-11-20",
   "summary": "Revisions in euro-area prices and rates (ECB)",
@@ -53,5 +46,5 @@
    "oil_brent": "2026Q3"
   }
  },
- "outcome": "changed"
+ "outcome": "unchanged"
 }

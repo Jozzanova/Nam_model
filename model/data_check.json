@@ -1,50 +1,630 @@
 {
- "new_quarters": {},
+ "new_quarters": {
+  "gdp_ml": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "gdp_ml_sa": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "gdp_ml_cur": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "gdp_ml_basic": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "gdp_total": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "gov_cons": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "imp_cur": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "imp_const": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "imp_trad_cur": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "imp_trad_const": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "pi_defl": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "pi_trad_defl": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "py_ml": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "va_ml": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "va_ml_cur": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "va_man": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "va_man_cur": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "wages_ml": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "wcost_ml": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "hours_ml": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "hours_emp_ml": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "employees_ml": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "wages_man": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "wcost_man": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "hours_man": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "hours_emp_man": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "employees_man": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "wages_ml_sa": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "wcost_ml_sa": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "w_hour": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "wc_hour": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "t1": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "t1_sa": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "w_hour_man": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "wc_hour_man": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "z_ml": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "z_man": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "py_man": [
+   "2026Q2",
+   "2026Q3"
+  ],
+  "policy_rate": [
+   "2026Q3",
+   "2026Q4"
+  ]
+ },
  "shortened": {},
- "revised": {},
+ "revised": {
+  "gdp_ml": {
+   "cells": 194,
+   "first": "1978Q1",
+   "max_rel": 0.053898386409043805,
+   "at": "2026Q1"
+  },
+  "gdp_ml_sa": {
+   "cells": 194,
+   "first": "1978Q1",
+   "max_rel": 0.0522108406622381,
+   "at": "2026Q1"
+  },
+  "gdp_ml_cur": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.0164332866750758,
+   "at": "2026Q1"
+  },
+  "gdp_ml_basic": {
+   "cells": 194,
+   "first": "1978Q1",
+   "max_rel": 0.055067864483056964,
+   "at": "1979Q3"
+  },
+  "gdp_total": {
+   "cells": 194,
+   "first": "1978Q1",
+   "max_rel": 0.028864750999059406,
+   "at": "1989Q1"
+  },
+  "gov_cons": {
+   "cells": 194,
+   "first": "1978Q1",
+   "max_rel": 0.054203440706061555,
+   "at": "2001Q4"
+  },
+  "imp_cur": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.0030507542259927646,
+   "at": "2024Q4"
+  },
+  "imp_const": {
+   "cells": 194,
+   "first": "1978Q1",
+   "max_rel": 0.05403159622486664,
+   "at": "1980Q3"
+  },
+  "imp_trad_cur": {
+   "cells": 10,
+   "first": "2023Q1",
+   "max_rel": 0.011806753124505907,
+   "at": "2024Q2"
+  },
+  "imp_trad_const": {
+   "cells": 194,
+   "first": "1978Q1",
+   "max_rel": 0.021058679332005517,
+   "at": "2003Q3"
+  },
+  "pi_defl": {
+   "cells": 194,
+   "first": "1978Q1",
+   "max_rel": 0.05126182149213744,
+   "at": "1980Q3"
+  },
+  "pi_trad_defl": {
+   "cells": 194,
+   "first": "1978Q1",
+   "max_rel": 0.02062435049749648,
+   "at": "2003Q3"
+  },
+  "py_ml": {
+   "cells": 194,
+   "first": "1978Q1",
+   "max_rel": 0.05029540473228509,
+   "at": "1979Q3"
+  },
+  "va_ml": {
+   "cells": 194,
+   "first": "1978Q1",
+   "max_rel": 0.055067864483056964,
+   "at": "1979Q3"
+  },
+  "va_ml_cur": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.015704442394142242,
+   "at": "2026Q1"
+  },
+  "va_man": {
+   "cells": 194,
+   "first": "1978Q1",
+   "max_rel": 0.030387754032187603,
+   "at": "1978Q2"
+  },
+  "va_man_cur": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.058461109238226984,
+   "at": "2026Q2"
+  },
+  "wages_ml": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.002449919146040807,
+   "at": "2025Q4"
+  },
+  "wcost_ml": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.001799257913721709,
+   "at": "2025Q4"
+  },
+  "hours_ml": {
+   "cells": 13,
+   "first": "2023Q1",
+   "max_rel": 0.0076307463242137035,
+   "at": "2026Q1"
+  },
+  "hours_emp_ml": {
+   "cells": 12,
+   "first": "2023Q1",
+   "max_rel": 0.00848963474827248,
+   "at": "2026Q1"
+  },
+  "employees_ml": {
+   "cells": 13,
+   "first": "2023Q1",
+   "max_rel": 0.001570242166236304,
+   "at": "2026Q2"
+  },
+  "wages_man": {
+   "cells": 13,
+   "first": "2023Q1",
+   "max_rel": 0.007337109889420766,
+   "at": "2026Q2"
+  },
+  "wcost_man": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.006882955762138645,
+   "at": "2026Q2"
+  },
+  "hours_man": {
+   "cells": 7,
+   "first": "2024Q2",
+   "max_rel": 0.01168969181721582,
+   "at": "2026Q1"
+  },
+  "hours_emp_man": {
+   "cells": 6,
+   "first": "2025Q1",
+   "max_rel": 0.012931034482758652,
+   "at": "2026Q1"
+  },
+  "employees_man": {
+   "cells": 13,
+   "first": "2023Q1",
+   "max_rel": 0.002190100744634253,
+   "at": "2025Q1"
+  },
+  "wages_ml_sa": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.002641024796654263,
+   "at": "2025Q3"
+  },
+  "wcost_ml_sa": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.001700624539701649,
+   "at": "2025Q4"
+  },
+  "w_hour": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.0073599165735219445,
+   "at": "2026Q1"
+  },
+  "wc_hour": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.007822104749973994,
+   "at": "2026Q1"
+  },
+  "t1": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.003337041156840793,
+   "at": "2025Q2"
+  },
+  "t1_sa": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.005279353316607995,
+   "at": "2025Q3"
+  },
+  "w_hour_man": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.015161990173408862,
+   "at": "2026Q1"
+  },
+  "wc_hour_man": {
+   "cells": 14,
+   "first": "2023Q1",
+   "max_rel": 0.014478192579928164,
+   "at": "2026Q1"
+  },
+  "z_ml": {
+   "cells": 126,
+   "first": "1995Q1",
+   "max_rel": 0.05157102337401827,
+   "at": "2025Q3"
+  },
+  "z_man": {
+   "cells": 126,
+   "first": "1995Q1",
+   "max_rel": 0.0247492069661558,
+   "at": "1999Q1"
+  },
+  "py_man": {
+   "cells": 194,
+   "first": "1978Q1",
+   "max_rel": 0.06312053748579621,
+   "at": "2026Q2"
+  }
+ },
  "dropped": [],
  "added": [],
- "changed": false,
- "checked": "2026-11-24",
- "fetched": "2026-11-24",
+ "changed": true,
+ "checked": "2026-11-27",
+ "fetched": "2026-11-27",
  "kept_from_cache": [],
  "failures": [],
  "last_quarter": {
-  "gdp_ml": "2026Q2",
+  "gdp_ml": "2026Q3",
   "cpi": "2026Q3",
   "cpi_ate": "2026Q3",
-  "w_hour": "2026Q2",
+  "w_hour": "2026Q3",
   "u_reg": "2026Q2",
-  "pi_defl": "2026Q2",
+  "pi_defl": "2026Q3",
   "i44": "2026Q3",
-  "policy_rate": "2026Q3",
+  "policy_rate": "2026Q4",
   "nibor3m": "2026Q3",
   "hicp_ea": "2026Q3",
   "ppi_ea": "2026Q3",
   "oil_brent": "2026Q3"
  },
- "summary": "No change",
+ "summary": "New observations for 2026Q3: wages and productivity (Statistics Norway), national accounts (Statistics Norway); for 2026Q4: Norges Bank interest rates; revisions in wages and productivity (Statistics Norway), national accounts (Statistics Norway)",
  "last_update": {
-  "date": "2026-11-20",
-  "summary": "Revisions in euro-area prices and rates (ECB)",
-  "new_quarters": {},
+  "date": "2026-11-27",
+  "summary": "New observations for 2026Q3: wages and productivity (Statistics Norway), national accounts (Statistics Norway); for 2026Q4: Norges Bank interest rates; revisions in wages and productivity (Statistics Norway), national accounts (Statistics Norway)",
+  "new_quarters": {
+   "gdp_ml": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "gdp_ml_sa": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "gdp_ml_cur": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "gdp_ml_basic": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "gdp_total": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "gov_cons": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "imp_cur": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "imp_const": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "imp_trad_cur": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "imp_trad_const": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "pi_defl": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "pi_trad_defl": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "py_ml": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "va_ml": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "va_ml_cur": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "va_man": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "va_man_cur": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "wages_ml": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "wcost_ml": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "hours_ml": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "hours_emp_ml": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "employees_ml": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "wages_man": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "wcost_man": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "hours_man": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "hours_emp_man": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "employees_man": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "wages_ml_sa": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "wcost_ml_sa": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "w_hour": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "wc_hour": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "t1": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "t1_sa": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "w_hour_man": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "wc_hour_man": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "z_ml": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "z_man": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "py_man": [
+    "2026Q2",
+    "2026Q3"
+   ],
+   "policy_rate": [
+    "2026Q3",
+    "2026Q4"
+   ]
+  },
   "revised": [
-   "hicp_ea"
+   "employees_man",
+   "employees_ml",
+   "gdp_ml",
+   "gdp_ml_basic",
+   "gdp_ml_cur",
+   "gdp_ml_sa",
+   "gdp_total",
+   "gov_cons",
+   "hours_emp_man",
+   "hours_emp_ml",
+   "hours_man",
+   "hours_ml",
+   "imp_const",
+   "imp_cur",
+   "imp_trad_const",
+   "imp_trad_cur",
+   "pi_defl",
+   "pi_trad_defl",
+   "py_man",
+   "py_ml",
+   "t1",
+   "t1_sa",
+   "va_man",
+   "va_man_cur",
+   "va_ml",
+   "va_ml_cur",
+   "w_hour",
+   "w_hour_man",
+   "wages_man",
+   "wages_ml",
+   "wages_ml_sa",
+   "wc_hour",
+   "wc_hour_man",
+   "wcost_man",
+   "wcost_ml",
+   "wcost_ml_sa",
+   "z_man",
+   "z_ml"
   ],
   "last_quarter": {
-   "gdp_ml": "2026Q2",
+   "gdp_ml": "2026Q3",
    "cpi": "2026Q3",
    "cpi_ate": "2026Q3",
-   "w_hour": "2026Q2",
+   "w_hour": "2026Q3",
    "u_reg": "2026Q2",
-   "pi_defl": "2026Q2",
+   "pi_defl": "2026Q3",
    "i44": "2026Q3",
-   "policy_rate": "2026Q3",
+   "policy_rate": "2026Q4",
    "nibor3m": "2026Q3",
    "hicp_ea": "2026Q3",
    "ppi_ea": "2026Q3",
    "oil_brent": "2026Q3"
   }
  },
- "outcome": "unchanged"
+ "outcome": "changed"
 }
